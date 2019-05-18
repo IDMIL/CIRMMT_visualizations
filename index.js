@@ -1,75 +1,147 @@
-const http = require('http');
-const fs = require('fs');
-const tm = require('text-miner');
-const d3 = require('d3');
+const width = 1500;
+const height = 1500;
+const radius = width / 6;
 
-const hostname = '127.0.0.1';
-const port = 3000;
+var arc = d3.arc()
+    .startAngle(d => d.x0)
+    .endAngle(d => d.x1)
+    .padAngle(d => Math.min((d.x1 - d.x0) / 2, 0.005))
+    .padRadius(radius * 1.5)
+    .innerRadius(d => d.y0 * radius)
+    .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1))
 
-global.fetch = require("node-fetch");
+var partition = data => {
+    const root = d3.hierarchy({ values: data }, function(d) { return d.values; })
+        .sum(function(d) {
+            if (d.Title) {
+                return 1;
+            }
+            return 0;
+        })
+        .sort((a, b) => b.value - a.value);
+    return d3.partition()
+        .size([2 * Math.PI, root.height + 1])
+        (root);
+}
 
-let all_data;
-let csv_data;
-let dataByKeyword;
+var format = d3.format(",d");
 
-const server = http.createServer((req, res) => {
-    if (req.url == "/") {
-        fs.readFile('index.html', function(err, data) {
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.write(data);
-            res.end();
+d3.csv("./data.csv").then(function(data) {
+    let dataByLevel = d3.nest()
+        .key(d => d.MainLevel)
+        .key(d => d.Level1)
+        .entries(data);
+    // let dataByLevel = d3.nest()
+    //     .key(d => d.Date.split("-")[2])
+    //     .sortKeys(d3.ascending)
+    //     // .sortKeys((a, b) => a - b)
+    //     // .key(d => d.Lecturer)
+    //     .key(d => d.MainLevel)
+    //     .key(d => d.Level1)
+    //     .entries(all_data.csv_data);
+
+
+    dataByLevel = dataByLevel.filter(d => d.key != "");
+
+    const root = partition(dataByLevel);
+
+    console.log(root);
+
+    let color = d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, root.children.length + 1));
+
+    const svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .style("font", "12px sans-serif");
+
+    root.each(d => d.current = d);
+
+    const g = svg.append("g")
+        .attr("transform", `translate(${width / 2},${width / 2})`);
+
+    const path = g.append("g")
+        .selectAll("path")
+        .data(root.descendants().slice(1))
+        .join("path")
+        .attr("fill", d => { while (d.depth > 1) d = d.parent; return color(d.data.key); })
+        .attr("fill-opacity", d => arcVisible(d.current) ? (d.children ? 0.6 : 0.4) : 0)
+        .attr("d", d => arc(d.current));
+
+    path.filter(d => d.children)
+        .style("cursor", "pointer")
+        .on("click", clicked);
+
+    path.append("title")
+        .text(d => `${d.ancestors().map(d => d.data.key).reverse().join("/")}\n${format(d.value)}`);
+
+    const label = g.append("g")
+        .attr("pointer-events", "none")
+        .attr("text-anchor", "middle")
+        .style("user-select", "none")
+        .selectAll("text")
+        .data(root.descendants().slice(1))
+        .join("text")
+        .attr("dy", "0.35em")
+        .attr("fill-opacity", d => +labelVisible(d.current))
+        .attr("transform", d => labelTransform(d.current))
+        .text(d => {
+            if (d.data.Lecturer) {
+                return d.data.Lecturer;
+            }
+            return d.data.key;
         });
-    } else if (req.url == "/data") {
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.write(JSON.stringify(all_data));
-        res.end();
+
+    const parent = g.append("circle")
+        .datum(root)
+        .attr("r", radius)
+        .attr("fill", "none")
+        .attr("pointer-events", "all")
+        .on("click", clicked);
+
+    function clicked(p) {
+        parent.datum(p.parent || root);
+
+        root.each(d => d.target = {
+            x0: Math.max(0, Math.min(1, (d.x0 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
+            x1: Math.max(0, Math.min(1, (d.x1 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
+            y0: Math.max(0, d.y0 - p.depth),
+            y1: Math.max(0, d.y1 - p.depth)
+        });
+
+        const t = g.transition().duration(750);
+
+        // Transition the data on all arcs, even the ones that aren’t visible,
+        // so that if this transition is interrupted, entering arcs will start
+        // the next transition from the desired position.
+        path.transition(t)
+            .tween("data", d => {
+                const i = d3.interpolate(d.current, d.target);
+                return t => d.current = i(t);
+            })
+            .filter(function(d) {
+                return +this.getAttribute("fill-opacity") || arcVisible(d.target);
+            })
+            .attr("fill-opacity", d => arcVisible(d.target) ? (d.children ? 0.6 : 0.4) : 0)
+            .attrTween("d", d => () => arc(d.current));
+
+        label.filter(function(d) {
+                return +this.getAttribute("fill-opacity") || labelVisible(d.target);
+            }).transition(t)
+            .attr("fill-opacity", d => +labelVisible(d.target))
+            .attrTween("transform", d => () => labelTransform(d.current));
     }
 });
 
-server.listen(port, hostname, () => {
+function arcVisible(d) {
+    return d.y1 <= 3 && d.y0 >= 1 && d.x1 > d.x0;
+}
 
-    fs.readFile('data.csv', 'utf8', function(err, data) {
-        csv_data = d3.csvParse(data);
+function labelVisible(d) {
+    return d.y1 <= 3 && d.y0 >= 1 && (d.y1 - d.y0) * (d.x1 - d.x0) > 0.03;
+}
 
-        let keymap = new Array();
-
-        for (var i = 0; i < csv_data.length; i++) {
-            var my_corpus = new tm.Corpus([]);
-
-            // my_corpus.addDoc(csv_data[i].Summary);
-            // my_corpus.addDoc(csv_data[i].Title);
-            my_corpus.addDoc(csv_data[i].Keywords);
-            my_corpus.trim().toLower().removeWords(tm.STOPWORDS.EN).removeInterpunctuation().removeDigits().removeNewlines().clean();
-
-            var terms = new tm.DocumentTermMatrix(my_corpus);
-
-            for (let j = 0; j < terms.vocabulary.length; j++) {
-                keymap.push({ video: csv_data[i], keyword: terms.vocabulary[j] });
-            }
-
-        };
-
-        dataByKeyword = d3.nest()
-            // .key(d => d.data.MainLevel)
-            .key(d => d.keyword)
-            // .key(d => d.data.Date.split("-")[2])
-            .entries(keymap);
-
-        dataByKeyword = dataByKeyword.filter(d => d.values.length > 2);
-
-        for (var i = 0; i < dataByKeyword.length; i++) {
-            console.log(dataByKeyword[i].key + " " + dataByKeyword[i].values.length);
-            // str = "";
-            // for (var j = 0; j < dataByKeyword[i].values.length; j++) {
-            //     str = str + data[dataByKeyword[i].values[j].id].Title + ", ";
-            // }
-            // console.log(str);
-            // console.log()
-        }
-
-        all_data = { csv_data: csv_data, dataByKeyword: dataByKeyword };
-
-    });
-
-    console.log(`Server running at http://${hostname}:${port}/`);
-});
+function labelTransform(d) {
+    const x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
+    const y = (d.y0 + d.y1) / 2 * radius;
+    return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
+}

@@ -1,0 +1,30 @@
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    text {
+        pointer-events: none;
+        user-select: none;
+    }
+
+    div.title {
+        width: 100%;
+        font-family: sans-serif;
+        padding: 1em;
+    }
+
+    div.desc {
+        float: right;
+    }
+
+    iframe {
+        margin: 0;
+        padding: 0;
+        display: inline;
+    }
+
+    span {
+        vertical-align: top;
+        padding: 1em;
+    }
