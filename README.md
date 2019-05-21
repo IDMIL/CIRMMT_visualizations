@@ -4,5 +4,5 @@ Visualizing the CIRMMT distinguished lectures
 
 https://idmil.gitlab.io/CIRMMT_visualizations/
 
-Tested with
-```python -m SimpleHTTPServer 8000```
+Uses yarn package manager. To install dependencies, run
+```yarn install```
