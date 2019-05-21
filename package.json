@@ -1,0 +1,13 @@
+{
+  "name": "CIRMMT_visualizations",
+  "version": "1.0.0",
+  "description": "Visualization of CIRMMT Distinguished Lecture Series.",
+  "main": "index.js",
+  "repository": "https://gitlab.com/idmil/CIRMMT_visualizations.git",
+  "author": "Mathias Bredholt <mathiasbredholt@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "d3": "^5.9.2",
+    "videojs-youtube": "^2.6.0"
+  }
+}
