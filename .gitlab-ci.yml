@@ -8,6 +8,9 @@ pages:
         - node_modules/
     
     script:
+    - mkdir .public
+    - cp -r * .public
+    - mv .public public
     - yarn install
     
     artifacts:
