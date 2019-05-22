@@ -15,10 +15,10 @@ pages:
     - mv .public public
     - yarn install
     - yarn build
-    artifacts:
     
-    paths:
-    - public
+    artifacts:
+        paths:
+        - public
     
     only:
     - master
