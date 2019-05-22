@@ -8,6 +8,7 @@
   "license": "MIT",
   "dependencies": {
     "d3": "^5.9.2",
+    "d3-textwrap": "^2.0.2",
     "videojs-youtube": "^2.6.0"
   }
 }

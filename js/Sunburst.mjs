@@ -26,7 +26,7 @@ var partition = data => {
 
 var format = d3.format(",d");
 
-d3.csv("./data.csv").then(function(data) {
+d3.csv("data/data.csv").then(function(data) {
     let dataByLevel = d3.nest()
         .key(d => d.MainLevel)
         .key(d => d.Level1)
