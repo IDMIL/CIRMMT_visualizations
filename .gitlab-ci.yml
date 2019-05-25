@@ -4,7 +4,6 @@ pages:
     - mkdir .public
     - cp -r dist .public
     - mv .public public
-    - yarn install
     artifacts:
         paths:
         - public
