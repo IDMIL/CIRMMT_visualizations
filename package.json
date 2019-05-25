@@ -2,14 +2,23 @@
   "name": "CIRMMT_visualizations",
   "version": "1.0.0",
   "description": "Visualization of CIRMMT Distinguished Lecture Series.",
-  "main": "index.js",
+  "private": true,
   "repository": "https://gitlab.com/idmil/CIRMMT_visualizations.git",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
   "author": "Mathias Bredholt <mathiasbredholt@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "d3": "^5.9.2",
-    "d3-textwrap": "^2.0.2",
-    "videojs-youtube": "^2.6.0",
-    "webpack": "^4.32.2"
+    "videojs": "^1.0.0",
+    "videojs-youtube": "^2.6.0"
+  },
+  "devDependencies": {
+    "csv-loader": "^3.0.2",
+    "papaparse": "^4.6.3",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.2"
   }
 }
