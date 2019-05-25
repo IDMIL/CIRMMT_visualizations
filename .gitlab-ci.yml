@@ -2,7 +2,7 @@ pages:
     stage: deploy
     script:
     - mkdir .public
-    - cp dist .public
+    - cp -r dist .public
     - mv .public public
     - yarn install
     artifacts:
