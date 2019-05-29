@@ -4,7 +4,7 @@ import data from './data.csv';
 const width = 700;
 const height = 700;
 
-function showVideoView(selectedNode, keywordNodeClicked) {
+function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
     let list = document.getElementsByClassName("graph");
     while (list[0]) {
         list[0].parentNode.removeChild(list[0]);
@@ -18,7 +18,13 @@ function showVideoView(selectedNode, keywordNodeClicked) {
     data.forEach(function(d) {
         if (d.Level1 == selectedNode) {
             nodes[d.Level1] = { id: d.Level1, value: 60 };
-            nodes[d.Title] = { id: d.Title, value: 30, Lecturer: d.Lecturer };
+            nodes[d.Title] = {
+                id: d.Title,
+                value: 30,
+                Lecturer: d.Lecturer,
+                YouTube: d.YouTube,
+                Summary: d.Summary
+            };
             let l = {};
             l.source = d.Level1;
             l.target = d.Title;
@@ -27,6 +33,9 @@ function showVideoView(selectedNode, keywordNodeClicked) {
     });
 
     nodes = Object.values(nodes);
+
+    console.log(nodes);
+
 
     let simulation = d3.forceSimulation(nodes)
         .force("link", d3.forceLink(links).id(d => d.id).distance(200))
@@ -101,7 +110,7 @@ function showVideoView(selectedNode, keywordNodeClicked) {
 
     node.on("click", d => {
         if (d.Lecturer) {
-            // keywordNodeClicked();
+            videoClicked(d);
         } else {
             keywordNodeClicked();
         }

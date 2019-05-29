@@ -1,10 +1,14 @@
 import './style.css';
 import showKeywordView from './KeywordView';
 import showVideoView from './VideoView';
-import createSideBar from './SideBar';
+import SideBar from './SideBar';
+
+function videoClicked(node) {
+    SideBar.showVideo(node);
+}
 
 function nodeClicked(id) {
-    showVideoView(id, backButtonClicked);
+    showVideoView(id, videoClicked, backButtonClicked);
 }
 
 function backButtonClicked() {
@@ -13,4 +17,4 @@ function backButtonClicked() {
 
 showKeywordView(nodeClicked);
 
-createSideBar(backButtonClicked);
+SideBar.createSideBar(backButtonClicked);

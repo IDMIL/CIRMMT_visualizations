@@ -26,7 +26,6 @@ function showKeywordView(clicked) {
 
     nodes = Object.values(nodes);
 
-    // console.log(nodes);
     // console.log(links);
 
     let simulation = d3.forceSimulation(nodes)

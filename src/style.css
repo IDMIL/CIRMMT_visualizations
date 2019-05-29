@@ -1,12 +1,17 @@
+:root {
+    --side_margin: 8pt;
+}
+
 html,
 body {
     margin: 0;
     height: 100%;
+    font-family: arial;
 }
 
 #container {
     height: 100%;
-    width: 75%;
+    width: 70%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -15,7 +20,7 @@ body {
 .graph {
     width: 100%;
     height: 100%;
-    font: 10pt arial, sans-serif;
+    font-size: 10pt;
 }
 
 .node {
@@ -30,19 +35,17 @@ body {
 
 .sideBar {
     height: 100%;
-    width: 25%;
+    width: 30%;
     position: fixed;
     top: 0;
     right: 0;
-    background: #DDD;
+    background: #EEE;
+    padding: var(--side_margin);
 }
 
 .button {
-    width: 80%;
-    margin: auto;
-    margin-top: 1em;
-    margin-bottom: 1em;
-    background: #EEE;
+    margin: var(--side_margin);
+    background: #DDD;
     font: 12pt arial, sans-serif;
     height: 2em;
     text-align: center;
@@ -53,4 +56,30 @@ body {
 
 .button:hover {
     background: #FFF;
+}
+
+#videoContainer {}
+
+.videoLecturer {
+    font-size: 16pt;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin: var(--side_margin);
+}
+
+.videoTitle {
+    font-size: 14pt;
+    margin: var(--side_margin);
+}
+
+.videoSummary {
+    font-size: 9pt;
+    margin: var(--side_margin);
+    text-align: justify;
+    line-height: 1.5em;
+}
+
+.video-js {
+    width: initial !important;
+    margin: var(--side_margin) !important;
 }
