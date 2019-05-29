@@ -10,14 +10,15 @@
   },
   "author": "Mathias Bredholt <mathiasbredholt@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "d3": "^5.9.2",
-    "videojs": "^1.0.0",
-    "videojs-youtube": "^2.6.0"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "css-loader": "^2.1.1",
     "csv-loader": "^3.0.2",
+    "d3": "^5.9.2",
     "papaparse": "^4.6.3",
+    "style-loader": "^0.23.1",
+    "videojs": "^1.0.0",
+    "videojs-youtube": "^2.6.0",
     "webpack": "^4.32.2",
     "webpack-cli": "^3.3.2"
   }
