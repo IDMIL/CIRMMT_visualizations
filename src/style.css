@@ -33,6 +33,38 @@ body {
     pointer-events: none;
 }
 
+.nodeTextBox {
+    text-align: center;
+    padding-left: 8pt;
+    padding-right: 8pt;
+}
+
+.nodeTextBoxBody {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nodeTitleBox {
+    cursor: default;
+    user-select: none;
+    pointer-events: none;
+}
+
+.nodeLecturer {
+    padding: 4pt;
+    display: inline-block;
+    background: #333;
+    color: #FFF;
+    text-transform: uppercase;
+}
+
+.nodeTitle {
+    padding: 4pt;
+    display: inline-block;
+    background: #EEE;
+}
+
 .sideBar {
     height: 100%;
     width: 30%;
@@ -61,6 +93,9 @@ body {
 #videoContainer {}
 
 .videoLecturer {
+    padding: 4pt;
+    background: #333;
+    color: #FFF;
     font-size: 16pt;
     text-transform: uppercase;
     font-weight: bold;
@@ -82,4 +117,8 @@ body {
 .video-js {
     width: initial !important;
     margin: var(--side_margin) !important;
+}
+
+.noBox {
+    display: none;
 }
