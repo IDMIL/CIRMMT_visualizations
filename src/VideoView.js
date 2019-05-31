@@ -38,7 +38,8 @@ function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
         .force('link', d3.forceLink(links).id(d => d.id).distance(250))
         .force('charge', d3.forceManyBody().strength(-2000))
         .force('center', d3.forceCenter(width / 3, height / 2))
-        .force('collide', d3.forceCollide(60).strength(0.4));
+        // .force('collide', d3.forceCollide(60).strength(0.4));
+        .force('collide', d3.forceCollide(60).strength(2.0));
 
     let svg = d3.select('#container').append('svg')
         .attr('width', width)
