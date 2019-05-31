@@ -16,8 +16,8 @@ function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
     let links = [];
 
     data.forEach(function(d) {
-        if (d.Level1 == selectedNode) {
-            nodes[d.Level1] = { id: d.Level1, value: 60 };
+        if (d.Topic == selectedNode) {
+            nodes[d.Topic] = { id: d.Topic, value: 60 };
             nodes[d.Title] = {
                 id: d.Title,
                 value: 30,
@@ -26,15 +26,13 @@ function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
                 Summary: d.Summary
             };
             let l = {};
-            l.source = d.Level1;
+            l.source = d.Topic;
             l.target = d.Title;
             links.push(l);
         }
     });
 
     nodes = Object.values(nodes);
-
-    console.log(nodes);
 
     let simulation = d3.forceSimulation(nodes)
         .force('link', d3.forceLink(links).id(d => d.id).distance(250))
