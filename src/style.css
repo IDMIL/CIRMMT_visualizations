@@ -53,7 +53,6 @@ body {
 
 .nodeLecturer {
     padding: 4pt;
-    display: inline-block;
     background: #333;
     color: #FFF;
     text-transform: uppercase;
@@ -61,7 +60,6 @@ body {
 
 .nodeTitle {
     padding: 4pt;
-    display: inline-block;
     background: #EEE;
 }
 
@@ -99,6 +97,16 @@ body {
     font-size: 16pt;
     text-transform: uppercase;
     font-weight: bold;
+    margin: var(--side_margin);
+}
+
+.videoAffiliation {
+    font-size: 10pt;
+    margin: var(--side_margin);
+}
+
+.videoDate {
+    font-size: 9pt;
     margin: var(--side_margin);
 }
 

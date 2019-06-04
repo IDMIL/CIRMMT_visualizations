@@ -32,17 +32,32 @@ SideBar.showVideo = function(node) {
     videoLecturer.innerHTML = node.Lecturer;
     videoContainer.appendChild(videoLecturer);
 
+    let videoAffiliation = document.createElement('div');
+    videoAffiliation.classList.add('videoAffiliation');
+    videoAffiliation.innerHTML = node.Affiliation;
+    videoContainer.appendChild(videoAffiliation);
+
     let videoTitle = document.createElement('div');
     videoTitle.classList.add('videoTitle');
     videoTitle.innerHTML = node.id;
     videoContainer.appendChild(videoTitle);
 
+    let videoDate = document.createElement('div');
+    let dateObj = new Date(node.Date);
+    videoDate.classList.add('videoDate');
+    videoDate.innerHTML = node.Type + ', ' + dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    videoContainer.appendChild(videoDate);
+
     let video = document.createElement('video');
     video.classList.add('video-js');
     video.classList.add('vjs-default-skin');
-    video.setAttribute('controls', '');
     video.setAttribute('autoplay', '');
     videoContainer.appendChild(video);
+
+    // let videoKeywordContainer = document.createElement('div');
+    // videoSummary.classList.add('videoSummary');
+    // videoSummary.innerHTML = node.Summary;
+    // videoContainer.appendChild(videoSummary);
 
     let videoSummary = document.createElement('div');
     videoSummary.classList.add('videoSummary');
@@ -56,8 +71,8 @@ SideBar.showVideo = function(node) {
         sources: [{
             "type": "video/youtube",
             "src": node.YouTube,
-            "youtube": { "ytControls": 2 }
-        }]
+        }],
+        "youtube": { "ytControls": 2 }
     }, function() {});
 }
 

@@ -17,13 +17,16 @@ function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
 
     data.forEach(function(d) {
         if (d.Topic == selectedNode) {
-            nodes[d.Topic] = { id: d.Topic, value: 60 };
+            nodes[d.Topic] = { id: d.Topic, value: 40 };
             nodes[d.Title] = {
                 id: d.Title,
-                value: 30,
+                value: 20,
                 Lecturer: d.Lecturer,
                 YouTube: d.YouTube,
-                Summary: d.Summary
+                Summary: d.Summary,
+                Affiliation: d.Affiliation,
+                Date: d.Date,
+                Type: d.Type
             };
             let l = {};
             l.source = d.Topic;
@@ -52,7 +55,7 @@ function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
         .selectAll('line')
         .data(links)
         .join('line')
-        .attr('stroke-width', 4);
+        .attr('stroke-width', 1);
 
     let node = svg.append('g')
         .selectAll('g')
@@ -63,7 +66,7 @@ function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
 
     node.append('circle')
         .attr('stroke', '#CCC')
-        .attr('stroke-width', 4)
+        .attr('stroke-width', 1)
         .attr('r', d => d.value)
         .attr('fill', d => color(d.value));
 
