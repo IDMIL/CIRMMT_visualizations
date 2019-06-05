@@ -1,5 +1,5 @@
 :root {
-    --side_margin: 8pt;
+    --side_margin: 2vw;
 }
 
 html,
@@ -27,16 +27,12 @@ body {
     cursor: pointer;
 }
 
-.nodeText {
-    cursor: default;
-    user-select: none;
-    pointer-events: none;
-}
-
 .nodeTextBox {
     text-align: center;
     padding-left: 8pt;
     padding-right: 8pt;
+    user-select: none;
+    pointer-events: none;
 }
 
 .nodeTextBoxBody {
@@ -52,15 +48,14 @@ body {
 }
 
 .nodeLecturer {
-    padding: 4pt;
-    background: #333;
-    color: #FFF;
+    letter-spacing: 0.05em;
+    font-size: 2vh;
     text-transform: uppercase;
 }
 
 .nodeTitle {
-    padding: 4pt;
-    background: #EEE;
+    font-size: 1.75vh;
+    margin-top: 0.5em;
 }
 
 .sideBar {
@@ -69,7 +64,7 @@ body {
     position: fixed;
     top: 0;
     right: 0;
-    background: #EEE;
+    background: #f7ffe2;
     padding: var(--side_margin);
 }
 
@@ -91,40 +86,35 @@ body {
 #videoContainer {}
 
 .videoLecturer {
-    padding: 4pt;
-    background: #333;
-    color: #FFF;
-    font-size: 16pt;
+    font-size: 3vh;
     text-transform: uppercase;
-    font-weight: bold;
-    margin: var(--side_margin);
+    letter-spacing: 0.05em;
 }
 
 .videoAffiliation {
-    font-size: 10pt;
-    margin: var(--side_margin);
+    font-size: 1.75vh;
 }
 
 .videoDate {
-    font-size: 9pt;
-    margin: var(--side_margin);
+    font-size: 1.75vh;
 }
 
 .videoTitle {
-    font-size: 14pt;
-    margin: var(--side_margin);
+    font-size: 2.75vh;
+    margin-top: var(--side_margin);
 }
 
 .videoSummary {
-    font-size: 9pt;
-    margin: var(--side_margin);
-    text-align: justify;
+    font-size: 2vh;
     line-height: 1.5em;
 }
 
 .video-js {
     width: initial !important;
-    margin: var(--side_margin) !important;
+    margin-left: 0.5vw !important;
+    margin-right: 0.5vw !important;
+    margin-top: 4vh !important;
+    margin-bottom: 4vh !important;
 }
 
 .noBox {

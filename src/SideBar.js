@@ -11,11 +11,11 @@ SideBar.createSideBar = function(backButtonClicked) {
     element.classList.add('sideBar');
     document.body.appendChild(element);
 
-    let backButton = document.createElement('div');
-    backButton.classList.add('button');
-    backButton.innerHTML = 'Back';
-    backButton.onclick = backButtonClicked;
-    element.appendChild(backButton);
+    // let backButton = document.createElement('div');
+    // backButton.classList.add('button');
+    // backButton.innerHTML = 'Back';
+    // backButton.onclick = backButtonClicked;
+    // element.appendChild(backButton);
 }
 
 SideBar.showVideo = function(node) {

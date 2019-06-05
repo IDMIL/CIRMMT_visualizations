@@ -13,7 +13,7 @@ function showKeywordView(clicked) {
         list[0].parentNode.removeChild(list[0]);
     }
 
-    let color = d3.scaleOrdinal().range(["#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"]).domain([MIN_SIZE, MAX_SIZE]);
+    let color = d3.scaleOrdinal().range(['#f7ffe2', '#f2f2f2']).domain([MIN_SIZE, MAX_SIZE]);
 
     let nodes = {};
     let links = {};
@@ -43,8 +43,6 @@ function showKeywordView(clicked) {
     nodes = Object.values(nodes);
     links = Object.values(links);
 
-    console.log(links)
-
     let simulation = d3.forceSimulation(nodes)
         .force('link', d3.forceLink(links).id(d => d.id))
         .force('charge', d3.forceManyBody().strength(d => -d.value * 1.5))
@@ -57,7 +55,7 @@ function showKeywordView(clicked) {
         .attr('class', 'graph');
 
     let link = svg.append('g')
-        .attr('stroke', '#CCC')
+        .attr('stroke', '#DDD')
         .selectAll('line')
         .data(links)
         .join(enter => enter
@@ -66,12 +64,6 @@ function showKeywordView(clicked) {
             .attr('stroke-width', 1)
         );
 
-    // let link = svg.selectAll('line')
-    //     .data(links)
-    //     .enter()
-    //     // 
-    //     .append('line')
-    //     .attr('stroke-width', 2);
     let node = svg.append('g')
         .selectAll('g')
         .data(nodes)
@@ -80,10 +72,16 @@ function showKeywordView(clicked) {
         .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
 
     node.append('circle')
-        .attr('stroke', '#CCC')
+        .attr('stroke', '#DDD')
         .attr('stroke-width', d => d.value > 10 ? 1 : 0)
         .attr('r', d => d.value)
-        .attr('fill', d => d.value > 10 ? color(d.value) : '#888');
+        .attr('fill', d => d.drawTitle ? color(d.value) : '#DDD')
+        .on("mouseover", function(d) {
+            d3.select(this).attr('r', d => d.value * 1.2);
+        })
+        .on("mouseout", function(d) {
+            d3.select(this).attr('r', d => d.value);
+        });
 
     node.append('foreignObject')
         .filter(d => d.drawTitle)

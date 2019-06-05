@@ -4,13 +4,16 @@ import data from './data.csv';
 const width = 700;
 const height = 700;
 
+const MIN_SIZE = 20;
+const MAX_SIZE = 40;
+
 function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
     let list = document.getElementsByClassName('graph');
     while (list[0]) {
         list[0].parentNode.removeChild(list[0]);
     }
 
-    let color = d3.scaleOrdinal().range(["#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"]).domain([40, 60]);
+    let color = d3.scaleOrdinal().range(['#f7ffe2', '#f2f2f2']).domain([MIN_SIZE, MAX_SIZE]);
 
     let nodes = {};
     let links = [];
@@ -51,7 +54,7 @@ function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
         .attr('class', 'graph');
 
     let link = svg.append('g')
-        .attr('stroke', '#CCC')
+        .attr('stroke', '#DDD')
         .selectAll('line')
         .data(links)
         .join('line')
@@ -65,28 +68,16 @@ function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
         .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
 
     node.append('circle')
-        .attr('stroke', '#CCC')
+        .attr('stroke', '#DDD')
         .attr('stroke-width', 1)
         .attr('r', d => d.value)
-        .attr('fill', d => color(d.value));
-
-    // let title = node.append('text')
-    //     .text(d => {
-    //         if (d.Lecturer) {
-    //             return d.Lecturer;
-    //         } else {
-    //             return d.id;
-    //         }
-    //     })
-    //     .attr('class', 'nodeText')
-    //     .attr('text-anchor', d => {
-    //         if (d.Lecturer) {
-    //             return 'left';
-    //         } else {
-    //             return 'middle';
-    //         }
-    //     });
-
+        .attr('fill', d => color(d.value))
+        .on("mouseover", function(d) {
+            d3.select(this).attr('r', d => d.value * 1.2);
+        })
+        .on("mouseout", function(d) {
+            d3.select(this).attr('r', d => d.value);
+        });
 
     node.append('foreignObject')
         .attr('class', d => {
