@@ -13,14 +13,12 @@ function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
         list[0].parentNode.removeChild(list[0]);
     }
 
-    let color = d3.scaleOrdinal().range(['#f7ffe2', '#f2f2f2']).domain([MIN_SIZE, MAX_SIZE]);
-
     let nodes = {};
     let links = [];
 
     data.forEach(function(d) {
         if (d.Topic == selectedNode) {
-            nodes[d.Topic] = { id: d.Topic, value: 40 };
+            nodes[d.Topic] = { id: d.Topic, value: 50, color: '#e4e8b9' };
             nodes[d.Title] = {
                 id: d.Title,
                 value: 20,
@@ -29,7 +27,8 @@ function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
                 Summary: d.Summary,
                 Affiliation: d.Affiliation,
                 Date: d.Date,
-                Type: d.Type
+                Type: d.Type,
+                color: '#c2e8dc'
             };
             let l = {};
             l.source = d.Topic;
@@ -54,11 +53,11 @@ function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
         .attr('class', 'graph');
 
     let link = svg.append('g')
-        .attr('stroke', '#DDD')
+        .attr('stroke', '#e4e8b9')
         .selectAll('line')
         .data(links)
         .join('line')
-        .attr('stroke-width', 1);
+        .attr('stroke-width', 1.5);
 
     let node = svg.append('g')
         .selectAll('g')
@@ -68,16 +67,14 @@ function showVideoView(selectedNode, videoClicked, keywordNodeClicked) {
         .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
 
     node.append('circle')
-        .attr('stroke', '#DDD')
-        .attr('stroke-width', 1)
         .attr('r', d => d.value)
-        .attr('fill', d => color(d.value))
-        .on("mouseover", function(d) {
-            d3.select(this).attr('r', d => d.value * 1.2);
-        })
-        .on("mouseout", function(d) {
-            d3.select(this).attr('r', d => d.value);
-        });
+        .attr('fill', d => d.color);
+    // .on("mouseover", function(d) {
+    //     d3.select(this).attr('r', d => d.value * 1.2);
+    // })
+    // .on("mouseout", function(d) {
+    //     d3.select(this).attr('r', d => d.value);
+    // });
 
     node.append('foreignObject')
         .attr('class', d => {

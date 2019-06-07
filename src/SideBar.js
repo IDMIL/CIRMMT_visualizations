@@ -1,21 +1,74 @@
 require('!style-loader!css-loader!video.js/dist/video-js.css');
 import videojs from 'video.js';
 import 'videojs-youtube';
-// import 'video-js.min.css'
+import logo from './logo.png';
 
 let element;
+let sideBarFrontContainer;
 let SideBar = {};
+let searchBar;
+
+const Mode = {
+    DEFAULT: 0,
+    VIDEO: 1
+}
+
+let mode = Mode.DEFAULT;
 
 SideBar.createSideBar = function(backButtonClicked) {
     element = document.createElement('div');
     element.classList.add('sideBar');
+
+    sideBarFrontContainer = document.createElement('div');
+    element.appendChild(sideBarFrontContainer);
+
+    let sideBarTop = document.createElement('div');
+    sideBarTop.classList.add('sideBarTop');
+    sideBarFrontContainer.appendChild(sideBarTop);
+
+    const sideBarLogo = new Image();
+    sideBarLogo.src = logo;
+    sideBarTop.appendChild(sideBarLogo);
+
+    let sideBarTitle = document.createElement('div');
+    sideBarTitle.classList.add('sideBarTitle');
+    sideBarTitle.innerHTML = "Distinguished Lectures";
+    sideBarTop.appendChild(sideBarTitle);
+
+    let searchBarContainer = document.createElement('div');
+    searchBarContainer.classList.add('searchBarContainer');
+    sideBarFrontContainer.appendChild(searchBarContainer);
+
+    searchBar = document.createElement('input');
+    searchBar.type = 'text';
+    searchBar.placeholder = 'Search';
+    searchBar.classList.add('searchBar');
+    searchBarContainer.appendChild(searchBar);
+
     document.body.appendChild(element);
+
+    searchBar.focus();
 
     // let backButton = document.createElement('div');
     // backButton.classList.add('button');
     // backButton.innerHTML = 'Back';
     // backButton.onclick = backButtonClicked;
     // element.appendChild(backButton);
+}
+
+SideBar.showDefaultMode = function() {
+    element.style.width = '30%';
+
+    let elem = document.getElementById('videoContainer');
+    if (elem) {
+        elem.parentNode.removeChild(elem);
+    }
+
+    setTimeout(() => {
+        sideBarFrontContainer.style.display = 'block';
+        mode = Mode.DEFAULT;
+        searchBar.focus();
+    }, 500);
 }
 
 SideBar.showVideo = function(node) {
@@ -64,16 +117,23 @@ SideBar.showVideo = function(node) {
     videoSummary.innerHTML = node.Summary;
     videoContainer.appendChild(videoSummary);
 
-    element.appendChild(videoContainer);
+    sideBarFrontContainer.style.display = 'none';
+    element.style.width = '40%';
 
-    let player = videojs(video, {
-        techOrder: ["youtube"],
-        sources: [{
-            "type": "video/youtube",
-            "src": node.YouTube,
-        }],
-        "youtube": { "ytControls": 2 }
-    }, function() {});
+    setTimeout(() => {
+        element.appendChild(videoContainer);
+
+        let player = videojs(video, {
+            techOrder: ["youtube"],
+            sources: [{
+                "type": "video/youtube",
+                "src": node.YouTube,
+            }],
+            "youtube": { "ytControls": 2 }
+        }, function() {});
+
+        mode = Mode.VIDEO;
+    }, mode == Mode.DEFAULT ? 500 : 0);
 }
 
 export default SideBar;

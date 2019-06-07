@@ -13,30 +13,28 @@ function showKeywordView(clicked) {
         list[0].parentNode.removeChild(list[0]);
     }
 
-    let color = d3.scaleOrdinal().range(['#f7ffe2', '#f2f2f2']).domain([MIN_SIZE, MAX_SIZE]);
-
     let nodes = {};
     let links = {};
 
     data.forEach(function(d) {
         if (d.Title) {
-            nodes[d.ResearchAxis] = { id: d.ResearchAxis, value: MAX_SIZE, drawTitle: true };
+            nodes[d.ResearchAxis] = { id: d.ResearchAxis, value: MAX_SIZE, drawTitle: true, color: '#e4e8b9' };
             if (nodes[d.Topic] != undefined) {
                 nodes[d.Topic].value += 2;
             } else {
-                nodes[d.Topic] = { id: d.Topic, value: MIN_SIZE, drawTitle: true };
+                nodes[d.Topic] = { id: d.Topic, value: MIN_SIZE, drawTitle: true, color: '#c2e8dc' };
             }
-            nodes[d.Title] = { id: d.Title, value: 5, drawTitle: false };
+            // nodes[d.Title] = { id: d.Title, value: 5, drawTitle: false };
             let l = {};
             l.source = d.ResearchAxis;
             l.target = d.Topic;
-            l.draw = true;
-            links[`${d.ResearchAxis}->${d.Topic}`] = l;
-            l = {};
-            l.source = d.Title;
-            l.target = d.Topic;
             l.draw = false;
-            links[`${d.Title}->${d.Topic}`] = l;
+            links[`${d.ResearchAxis}->${d.Topic}`] = l;
+            // l = {};
+            // l.source = d.Title;
+            // l.target = d.Topic;
+            // l.draw = false;
+            // links[`${d.Title}->${d.Topic}`] = l;
         }
     });
 
@@ -45,9 +43,9 @@ function showKeywordView(clicked) {
 
     let simulation = d3.forceSimulation(nodes)
         .force('link', d3.forceLink(links).id(d => d.id))
-        .force('charge', d3.forceManyBody().strength(d => -d.value * 1.5))
+        .force('charge', d3.forceManyBody().strength(d => -d.value * 3))
         .force('center', d3.forceCenter(width / 2, height / 2))
-        .force('collide', d3.forceCollide().strength(1.0).radius(d => d.value * 1.1));
+        .force('collide', d3.forceCollide().strength(0.8).radius(d => d.value * 1.1));
 
 
     let svg = d3.select('#container').append('svg')
@@ -75,13 +73,20 @@ function showKeywordView(clicked) {
         .attr('stroke', '#DDD')
         .attr('stroke-width', d => d.value > 10 ? 1 : 0)
         .attr('r', d => d.value)
-        .attr('fill', d => d.drawTitle ? color(d.value) : '#DDD')
-        .on("mouseover", function(d) {
-            d3.select(this).attr('r', d => d.value * 1.2);
-        })
-        .on("mouseout", function(d) {
-            d3.select(this).attr('r', d => d.value);
-        });
+        .attr('fill', d => d.drawTitle ? d.color : '#DDD');
+    // .on("mouseover", function(d) {
+    //     d3.select(this).attr('r', d => d.value * 1.2);
+    //     simulation.force('collide', d3.forceCollide().strength(1.0).radius(q => q.id == d.id ? q.value * 1.5 : q.value * 1.1));
+    //     simulation.restart();
+    // })
+    // .on("mouseout", function(d) {
+    //     d3.select(this).attr('r', d => d.value);
+    //     simulation.force('link', d3.forceLink(links).id(q => q.id))
+    //         .force('charge', d3.forceManyBody().strength(q => -q.value * 1.5))
+    //         .force('center', d3.forceCenter(width / 2, height / 2))
+    //         .force('collide', d3.forceCollide().strength(1.0).radius(q => q.value * 1.1));
+    //     simulation.restart();
+    // });
 
     node.append('foreignObject')
         .filter(d => d.drawTitle)

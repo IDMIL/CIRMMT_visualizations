@@ -1,5 +1,5 @@
 :root {
-    --side_margin: 2vw;
+    --side_margin: 3vw;
 }
 
 html,
@@ -15,6 +15,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: width 0.5s;
 }
 
 .graph {
@@ -64,8 +65,43 @@ body {
     position: fixed;
     top: 0;
     right: 0;
-    background: #f7ffe2;
+    background: #d6e8d5;
     padding: var(--side_margin);
+    transition: width 0.5s;
+}
+
+.sideBarTop {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--side_margin);
+}
+
+.sideBarTitle {
+    width: 100%;
+    margin: 2vh;
+    font-size: 3.8vh;
+    letter-spacing: 0.1em;
+    line-height: 1.6em;
+    text-transform: uppercase;
+}
+
+.searchBarContainer {
+    padding: 1.5vh;
+    background: #fff;
+}
+
+.searchBarContainer:focus-within {
+    outline-style: solid;
+    outline-width: thin;
+    outline-color: #a5e2ff;
+}
+
+.searchBar {
+    width: 100%;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    font-size: 2.5vh;
 }
 
 .button {
@@ -83,7 +119,9 @@ body {
     background: #FFF;
 }
 
-#videoContainer {}
+#videoContainer {
+    overflow-y: scroll;
+}
 
 .videoLecturer {
     font-size: 3vh;
@@ -93,28 +131,33 @@ body {
 
 .videoAffiliation {
     font-size: 1.75vh;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 .videoDate {
     font-size: 1.75vh;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 .videoTitle {
     font-size: 2.75vh;
-    margin-top: var(--side_margin);
+    margin-top: 1vh;
 }
 
 .videoSummary {
     font-size: 2vh;
-    line-height: 1.5em;
+    line-height: 1.75em;
 }
 
 .video-js {
     width: initial !important;
+    height: 35vh !important;
     margin-left: 0.5vw !important;
     margin-right: 0.5vw !important;
-    margin-top: 4vh !important;
-    margin-bottom: 4vh !important;
+    margin-top: 3vh !important;
+    margin-bottom: 3vh !important;
 }
 
 .noBox {
