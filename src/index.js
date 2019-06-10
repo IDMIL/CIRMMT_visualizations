@@ -1,25 +1,31 @@
 import './style.css';
-import showKeywordView from './KeywordView';
-import showVideoView from './VideoView';
+import DataView from './DataView';
 import SideBar from './SideBar';
 
 
 function videoClicked(node) {
     SideBar.showVideo(node);
     let container = document.getElementById('container');
-    container.style.width = '60%';
+    container.style.width = '55%';
 }
 
 function backButtonClicked() {
     SideBar.showDefaultMode();
-    showKeywordView(nodeClicked);
-    container.style.width = '70%';
+    DataView.showKeywordView(nodeClicked);
+    container.style.width = '65%';
 }
 
-function nodeClicked(id) {
-    showVideoView(id, videoClicked, backButtonClicked);
+function nodeClicked(id, isResearchAxis) {
+    if (isResearchAxis) {
+        DataView.showResearchAxisView(
+            id,
+            videoClicked,
+            DataView.showVideoView,
+            backButtonClicked);
+    } else {
+        DataView.showVideoView(id, videoClicked, backButtonClicked);
+    }
 }
 
-showKeywordView(nodeClicked);
-
+DataView.showKeywordView(nodeClicked);
 SideBar.createSideBar(backButtonClicked);

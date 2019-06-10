@@ -57,7 +57,7 @@ SideBar.createSideBar = function(backButtonClicked) {
 }
 
 SideBar.showDefaultMode = function() {
-    element.style.width = '30%';
+    element.style.width = '35%';
 
     let elem = document.getElementById('videoContainer');
     if (elem) {
@@ -118,7 +118,7 @@ SideBar.showVideo = function(node) {
     videoContainer.appendChild(videoSummary);
 
     sideBarFrontContainer.style.display = 'none';
-    element.style.width = '40%';
+    element.style.width = '45%';
 
     setTimeout(() => {
         element.appendChild(videoContainer);
