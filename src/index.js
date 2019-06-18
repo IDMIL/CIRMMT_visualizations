@@ -27,5 +27,9 @@ function nodeClicked(id, isResearchAxis) {
     }
 }
 
+function onSearch(results) {
+    DataView.showSearchResults(results);
+}
+
 DataView.showKeywordView(nodeClicked);
-SideBar.createSideBar(backButtonClicked);
+SideBar.createSideBar(backButtonClicked, onSearch);

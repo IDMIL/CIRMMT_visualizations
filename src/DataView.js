@@ -381,4 +381,138 @@ DataView.showVideoView = function(selectedNode, videoClicked, keywordNodeClicked
     })
 }
 
+DataView.showSearchResults = function(results) {
+    let list = document.getElementsByClassName('graph');
+    while (list[0]) {
+        list[0].parentNode.removeChild(list[0]);
+    }
+
+    let nodes = {};
+    let links = {};
+
+    results.forEach(function(d) {
+        nodes[d.ResearchAxis] = {
+            id: d.ResearchAxis,
+            nodeType: NodeType.RESEARCH_AXIS,
+            value: MAX_SIZE,
+            color: '#e4e8b9'
+        };
+        if (nodes[d.Topic] != undefined) {
+            nodes[d.Topic].value += 2;
+        } else {
+            nodes[d.Topic] = {
+                id: d.Topic,
+                nodeType: NodeType.TOPIC,
+                value: MIN_SIZE,
+                color: '#c2e8dc',
+            };
+        }
+        nodes[d.Title] = {
+            id: d.Title,
+            value: 30,
+            nodeType: NodeType.VIDEO,
+            Lecturer: d.Lecturer,
+            YouTube: d.YouTube,
+            Summary: d.Summary,
+            Affiliation: d.Affiliation,
+            Date: d.Date,
+            Type: d.Type,
+            color: '#d6e8d5'
+        };
+        let l = {};
+        l.source = d.ResearchAxis;
+        l.target = d.Topic;
+        l.draw = false;
+        links[`${d.ResearchAxis}->${d.Topic}`] = l;
+        l = {};
+        l.source = d.Title;
+        l.target = d.Topic;
+        l.draw = false;
+        links[`${d.Title}->${d.Topic}`] = l;
+    });
+
+    nodes = Object.values(nodes);
+    links = Object.values(links);
+
+    let simulation = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).id(d => d.id))
+        .force('charge', d3.forceManyBody().strength(-100))
+        .force('center', d3.forceCenter(WIDTH / 2, HEIGHT / 2))
+        .force('collide', d3.forceCollide().strength(0.5).radius(d => d.value * 1.05));
+
+    let svg = d3.select('#container').append('svg')
+        .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
+        .attr('class', 'graph');
+
+    let node = svg.append('g')
+        .selectAll('g')
+        .data(nodes)
+        .join('g')
+        .attr('class', 'node')
+        .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
+        .on('mouseover', function(d) {
+            if (d.nodeType == NodeType.VIDEO) {
+                node.sort(function(a, b) { // select the parent and sort the path's
+                    if (a.id != d.id) return -1; // a is not the hovered element, send "a" to the back
+                    else return 1;
+                });
+
+                let title = d3.select(this).append('foreignObject')
+                    .attr('id', 'nodeTitle')
+                    .attr('class', 'nodeTitleBox_')
+                    .attr('x', d.value + 8)
+                    .attr('y', -d.value)
+                    .attr('width', 150)
+                    .attr('height', 200);
+
+                title.append('xhtml:div')
+                    .attr('class', 'nodeLecturer')
+                    .html(d.Lecturer);
+
+                title.append('xhtml:div')
+                    .attr('class', 'nodeTitle')
+                    .html(d.id);
+
+                node.filter(q => q.id != d.id)
+                    .style('opacity', 0.25);
+            }
+        })
+        .on('mouseout', (d, i) => {
+            if (d.nodeType == NodeType.VIDEO) {
+                node.style('opacity', 1.0);
+                d3.select('#nodeTitle').remove();
+            }
+        })
+
+    node.append('circle')
+        .attr('stroke', '#DDD')
+        .attr('stroke-width', d => d.value > 10 ? 1 : 0)
+        .attr('r', d => d.value)
+        .attr('fill', d => d.color)
+        .on("mouseover", function(d) {
+            d3.select(this)
+                .attr('fill', '#a5e2ff');
+        })
+        .on("mouseout", function(d) {
+            d3.select(this)
+                .attr('fill', d.color);
+        });
+
+    node.append('foreignObject')
+        .filter(d => d.nodeType != NodeType.VIDEO)
+        .attr('class', 'nodeTextBox')
+        .attr('x', d => -d.value)
+        .attr('y', d => -d.value)
+        .attr('width', d => d.value * 2)
+        .attr('height', d => d.value * 2)
+        .append('xhtml:body')
+        .attr('class', 'nodeTextBoxBody')
+        .html(d => d.id);
+
+    simulation.on('tick', () => {
+        node
+            .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
+    });
+}
+
 export default DataView;

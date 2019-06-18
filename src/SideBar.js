@@ -1,6 +1,8 @@
 require('!style-loader!css-loader!video.js/dist/video-js.css');
 import videojs from 'video.js';
 import 'videojs-youtube';
+import Fuse from 'fuse.js';
+import data from './data.csv';
 import logo from './logo.png';
 
 let element;
@@ -15,7 +17,7 @@ const Mode = {
 
 let mode = Mode.DEFAULT;
 
-SideBar.createSideBar = function(backButtonClicked) {
+SideBar.createSideBar = function(backButtonClicked, onSearch) {
     element = document.createElement('div');
     element.classList.add('sideBar');
 
@@ -32,7 +34,7 @@ SideBar.createSideBar = function(backButtonClicked) {
 
     let sideBarTitle = document.createElement('div');
     sideBarTitle.classList.add('sideBarTitle');
-    sideBarTitle.innerHTML = "Distinguished Lectures";
+    sideBarTitle.innerHTML = 'Distinguished Lectures';
     sideBarTop.appendChild(sideBarTitle);
 
     let searchBarContainer = document.createElement('div');
@@ -48,6 +50,23 @@ SideBar.createSideBar = function(backButtonClicked) {
     document.body.appendChild(element);
 
     searchBar.focus();
+
+    searchBar.onkeyup = function() {
+        var options = {
+            shouldSort: true,
+            threshold: 0.1,
+            location: 0,
+            distance: 100,
+            maxPatternLength: 32,
+            minMatchCharLength: 1,
+            keys: [
+                'Title',
+                'Lecturer'
+            ]
+        };
+        var fuse = new Fuse(data, options);
+        onSearch(fuse.search(searchBar.value));
+    }
 
     // let backButton = document.createElement('div');
     // backButton.classList.add('button');
@@ -104,7 +123,7 @@ SideBar.showVideo = function(node) {
     let video = document.createElement('video');
     video.classList.add('video-js');
     video.classList.add('vjs-default-skin');
-    video.setAttribute('autoplay', '');
+    // video.setAttribute('autoplay', '');
     videoContainer.appendChild(video);
 
     // let videoKeywordContainer = document.createElement('div');
@@ -124,12 +143,12 @@ SideBar.showVideo = function(node) {
         element.appendChild(videoContainer);
 
         let player = videojs(video, {
-            techOrder: ["youtube"],
+            techOrder: ['youtube'],
             sources: [{
-                "type": "video/youtube",
-                "src": node.YouTube,
+                'type': 'video/youtube',
+                'src': node.YouTube,
             }],
-            "youtube": { "ytControls": 2 }
+            'youtube': { 'ytControls': 2 }
         }, function() {});
 
         mode = Mode.VIDEO;
