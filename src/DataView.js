@@ -15,10 +15,18 @@ let NodeType = {
     VIDEO: 2
 }
 
+var topicViewCreated = false;
+
 DataView.showKeywordView = function(clicked) {
     let list = document.getElementsByClassName('graph');
     while (list[0]) {
         list[0].parentNode.removeChild(list[0]);
+    }
+
+    if (topicViewCreated) {
+        let topicView = document.getElementById('topicView');
+        topicView.style.display = 'block';
+        return;
     }
 
     let nodes = {};
@@ -30,7 +38,8 @@ DataView.showKeywordView = function(clicked) {
                 id: d.ResearchAxis,
                 value: MAX_SIZE,
                 color: '#e4e8b9',
-                nodeType: NodeType.RESEARCH_AXIS
+                nodeType: NodeType.RESEARCH_AXIS,
+                researchAxis: d.ResearchAxis
             };
             if (nodes[d.Topic] != undefined) {
                 nodes[d.Topic].value += 3;
@@ -39,7 +48,8 @@ DataView.showKeywordView = function(clicked) {
                     id: d.Topic,
                     value: MIN_SIZE,
                     color: '#c2e8dc',
-                    nodeType: NodeType.TOPIC
+                    nodeType: NodeType.TOPIC,
+                    researchAxis: d.ResearchAxis
                 };
             }
             let l = {};
@@ -50,27 +60,49 @@ DataView.showKeywordView = function(clicked) {
         }
     });
 
-    nodes = Object.values(nodes);
-    links = Object.values(links);
+    let nodes_list = Object.values(nodes);
+    let links_list = Object.values(links);
 
-    let simulation = d3.forceSimulation(nodes)
-        .force('link', d3.forceLink(links).id(d => d.id))
+    let simulation = d3.forceSimulation(nodes_list)
+        .force('link', d3.forceLink(links_list).id(d => d.id))
         .force('charge', d3.forceManyBody().strength(d => -d.value * 3))
         .force('center', d3.forceCenter(WIDTH / 2, HEIGHT / 2))
-        .force('collide', d3.forceCollide().strength(0.95).radius(d => d.value * 1.05));
+        .force('collide', d3.forceCollide().strength(0.95).radius(d => d.value * 1.08));
 
 
     let svg = d3.select('#container').append('svg')
         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
-        // .attr('preserveAspectRatio', 'xMidYMid meet')
-        .attr('class', 'graph');
+        .attr('id', 'topicView');
+
+    let link = svg.append('g');
 
     let node = svg.append('g')
         .selectAll('g')
-        .data(nodes)
+        .data(nodes_list)
         .join('g')
         .attr('class', 'node')
-        .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
+        .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
+        .on("mouseover", function(d) {
+            let keys = Object.keys(links);
+            keys.forEach((k) => {
+                if (k.includes(d.researchAxis)) {
+                    let l = links[k];
+                    link.append('line')
+                        .data([l])
+                        .attr('class', 'link')
+                        .attr('stroke-width', 3)
+                        .attr('stroke', '#e4e8b9')
+                        .attr('x1', l.source.x)
+                        .attr('y1', l.source.y)
+                        .attr('x2', l.target.x)
+                        .attr('y2', l.target.y);
+                }
+            });
+        })
+        .on("mouseout", function(d) {
+            d3.selectAll('.link')
+                .remove();
+        });
 
     node.append('circle')
         .attr('stroke', '#DDD')
@@ -97,6 +129,11 @@ DataView.showKeywordView = function(clicked) {
         .html(d => d.id);
 
     simulation.on('tick', () => {
+        d3.selectAll('.link')
+            .attr('x1', d => d.source.x)
+            .attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x)
+            .attr('y2', d => d.target.y);
         node
             .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
     });
@@ -104,6 +141,8 @@ DataView.showKeywordView = function(clicked) {
     node.on('click', d => {
         clicked(d.id, d.nodeType == NodeType.RESEARCH_AXIS);
     });
+
+    topicViewCreated = true;
 };
 
 DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicked, researchAxisClicked) {
@@ -111,6 +150,9 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
     while (list[0]) {
         list[0].parentNode.removeChild(list[0]);
     }
+
+    let topicView = document.getElementById('topicView');
+    topicView.style.display = 'none';
 
     let nodes = {};
     let links = {};
@@ -258,6 +300,9 @@ DataView.showVideoView = function(selectedNode, videoClicked, keywordNodeClicked
         list[0].parentNode.removeChild(list[0]);
     }
 
+    let topicView = document.getElementById('topicView');
+    topicView.style.display = 'none';
+
     let nodes = {};
     let links = [];
 
@@ -386,6 +431,9 @@ DataView.showSearchResults = function(results) {
     while (list[0]) {
         list[0].parentNode.removeChild(list[0]);
     }
+
+    let topicView = document.getElementById('topicView');
+    topicView.style.display = 'none';
 
     let nodes = {};
     let links = {};

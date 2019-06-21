@@ -1,6 +1,3 @@
-require('!style-loader!css-loader!video.js/dist/video-js.css');
-import videojs from 'video.js';
-import 'videojs-youtube';
 import Fuse from 'fuse.js';
 import data from './data.csv';
 import logo from './logo.png';
@@ -30,11 +27,22 @@ SideBar.createSideBar = function(backButtonClicked, onSearch) {
 
     const sideBarLogo = new Image();
     sideBarLogo.src = logo;
+    sideBarLogo.style.width = '25%';
     sideBarTop.appendChild(sideBarLogo);
 
     let sideBarTitle = document.createElement('div');
     sideBarTitle.classList.add('sideBarTitle');
-    sideBarTitle.innerHTML = 'Distinguished Lectures';
+    let title1 = document.createElement('div');
+    title1.classList.add('sideBarTitleSpacing');
+    title1.innerHTML = '<span>D</span><span>I</span><span>S</span><span>T</span><span>I</span><span>N</span><span>G</span><span>U</span><span>I</span><span>S</span><span>H</span><span>E</span><span>D</span>';
+    sideBarTitle.appendChild(title1);
+    let title2 = document.createElement('div');
+    title2.classList.add('sideBarTitleSpacing');
+    title2.innerHTML = '<span>L</span><span>E</span><span>C</span><span>T</span><span>U</span><span>R</span><span>E</span><span>S</span>';
+    sideBarTitle.appendChild(title2);
+    // sideBarTitle
+    // sideBarTitle.classList.add('sideBarTitle');
+    // sideBarTitle.innerHTML = 'Distinguished Lectures';
     sideBarTop.appendChild(sideBarTitle);
 
     let searchBarContainer = document.createElement('div');
@@ -65,7 +73,7 @@ SideBar.createSideBar = function(backButtonClicked, onSearch) {
             ]
         };
         var fuse = new Fuse(data, options);
-        onSearch(fuse.search(searchBar.value));
+        // onSearch(fuse.search(searchBar.value));
     }
 
     // let backButton = document.createElement('div');
@@ -121,15 +129,8 @@ SideBar.showVideo = function(node) {
     videoContainer.appendChild(videoDate);
 
     let video = document.createElement('video');
-    video.classList.add('video-js');
-    video.classList.add('vjs-default-skin');
-    // video.setAttribute('autoplay', '');
     videoContainer.appendChild(video);
-
-    // let videoKeywordContainer = document.createElement('div');
-    // videoSummary.classList.add('videoSummary');
-    // videoSummary.innerHTML = node.Summary;
-    // videoContainer.appendChild(videoSummary);
+    video.id = 'ytvideo';
 
     let videoSummary = document.createElement('div');
     videoSummary.classList.add('videoSummary');
@@ -142,14 +143,11 @@ SideBar.showVideo = function(node) {
     setTimeout(() => {
         element.appendChild(videoContainer);
 
-        let player = videojs(video, {
-            techOrder: ['youtube'],
-            sources: [{
-                'type': 'video/youtube',
-                'src': node.YouTube,
-            }],
-            'youtube': { 'ytControls': 2 }
-        }, function() {});
+        let player = new YT.Player('ytvideo', {
+            height: '180',
+            width: '320',
+            videoId: node.YouTube
+        });
 
         mode = Mode.VIDEO;
     }, mode == Mode.DEFAULT ? 500 : 0);
