@@ -27,7 +27,7 @@ SideBar.createSideBar = function(backButtonClicked, onSearch) {
 
     const sideBarLogo = new Image();
     sideBarLogo.src = logo;
-    sideBarLogo.style.width = '25%';
+    sideBarLogo.style.width = '20%';
     sideBarTop.appendChild(sideBarLogo);
 
     let sideBarTitle = document.createElement('div');

@@ -1,4 +1,7 @@
-import * as d3 from 'd3';
+// import * as d3 from 'd3';
+import { select, selectAll } from 'd3-selection';
+import { forceSimulation, forceLink, forceCenter, forceManyBody, forceCollide } from 'd3-force';
+
 import data from './data.csv';
 
 const WIDTH = 700;
@@ -9,21 +12,19 @@ const MAX_SIZE = 55;
 
 let DataView = {};
 
-let NodeType = {
-    RESEARCH_AXIS: 0,
-    TOPIC: 1,
-    VIDEO: 2
-}
+DataView.RESEARCH_AXIS = 0;
+DataView.TOPIC = 1;
+DataView.VIDEO = 2;
 
-var topicViewCreated = false;
+var defaultViewCreated = false;
 
-DataView.showKeywordView = function(clicked) {
+DataView.showDefaultView = function(clicked) {
     let list = document.getElementsByClassName('graph');
     while (list[0]) {
         list[0].parentNode.removeChild(list[0]);
     }
 
-    if (topicViewCreated) {
+    if (defaultViewCreated) {
         let topicView = document.getElementById('topicView');
         topicView.style.display = 'block';
         return;
@@ -38,7 +39,7 @@ DataView.showKeywordView = function(clicked) {
                 id: d.ResearchAxis,
                 value: MAX_SIZE,
                 color: '#e4e8b9',
-                nodeType: NodeType.RESEARCH_AXIS,
+                nodeType: DataView.RESEARCH_AXIS,
                 researchAxis: d.ResearchAxis
             };
             if (nodes[d.Topic] != undefined) {
@@ -48,7 +49,7 @@ DataView.showKeywordView = function(clicked) {
                     id: d.Topic,
                     value: MIN_SIZE,
                     color: '#c2e8dc',
-                    nodeType: NodeType.TOPIC,
+                    nodeType: DataView.TOPIC,
                     researchAxis: d.ResearchAxis
                 };
             }
@@ -63,14 +64,14 @@ DataView.showKeywordView = function(clicked) {
     let nodes_list = Object.values(nodes);
     let links_list = Object.values(links);
 
-    let simulation = d3.forceSimulation(nodes_list)
-        .force('link', d3.forceLink(links_list).id(d => d.id))
-        .force('charge', d3.forceManyBody().strength(d => -d.value * 3))
-        .force('center', d3.forceCenter(WIDTH / 2, HEIGHT / 2))
-        .force('collide', d3.forceCollide().strength(0.95).radius(d => d.value * 1.08));
+    let simulation = forceSimulation(nodes_list)
+        .force('link', forceLink(links_list).id(d => d.id))
+        .force('charge', forceManyBody().strength(d => -d.value * 4))
+        .force('center', forceCenter(WIDTH / 2, HEIGHT / 2))
+        .force('collide', forceCollide().strength(0.95).radius(d => d.value * 1.08));
 
 
-    let svg = d3.select('#container').append('svg')
+    let svg = select('#container').append('svg')
         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
         .attr('id', 'topicView');
 
@@ -100,7 +101,7 @@ DataView.showKeywordView = function(clicked) {
             });
         })
         .on("mouseout", function(d) {
-            d3.selectAll('.link')
+            selectAll('.link')
                 .remove();
         });
 
@@ -110,11 +111,11 @@ DataView.showKeywordView = function(clicked) {
         .attr('r', d => d.value)
         .attr('fill', d => d.color)
         .on("mouseover", function(d) {
-            d3.select(this)
+            select(this)
                 .attr('fill', '#a5e2ff');
         })
         .on("mouseout", function(d) {
-            d3.select(this)
+            select(this)
                 .attr('fill', d.color);
         });
 
@@ -129,23 +130,25 @@ DataView.showKeywordView = function(clicked) {
         .html(d => d.id);
 
     simulation.on('tick', () => {
-        d3.selectAll('.link')
+        selectAll('.link')
             .attr('x1', d => d.source.x)
             .attr('y1', d => d.source.y)
             .attr('x2', d => d.target.x)
             .attr('y2', d => d.target.y);
         node
-            .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
+            .attr('transform', d => 'translate(' + Math.max(d.value, Math.min(WIDTH - d.value, d.x)) + ',' + Math.max(d.value, Math.min(HEIGHT - d.value, d.y)) + ')');
     });
 
     node.on('click', d => {
-        clicked(d.id, d.nodeType == NodeType.RESEARCH_AXIS);
+        console.log(d);
+        clicked(d);
     });
 
-    topicViewCreated = true;
+    defaultViewCreated = true;
 };
 
 DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicked, researchAxisClicked) {
+    console.log(researchAxis);
     let list = document.getElementsByClassName('graph');
     while (list[0]) {
         list[0].parentNode.removeChild(list[0]);
@@ -161,7 +164,7 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
         if (d.ResearchAxis == researchAxis) {
             nodes[d.ResearchAxis] = {
                 id: d.ResearchAxis,
-                nodeType: NodeType.RESEARCH_AXIS,
+                nodeType: DataView.RESEARCH_AXIS,
                 value: MAX_SIZE,
                 color: '#e4e8b9'
             };
@@ -170,7 +173,7 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
             } else {
                 nodes[d.Topic] = {
                     id: d.Topic,
-                    nodeType: NodeType.TOPIC,
+                    nodeType: DataView.TOPIC,
                     value: MIN_SIZE,
                     color: '#c2e8dc',
                 };
@@ -178,7 +181,7 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
             nodes[d.Title] = {
                 id: d.Title,
                 value: 30,
-                nodeType: NodeType.VIDEO,
+                nodeType: DataView.VIDEO,
                 Lecturer: d.Lecturer,
                 YouTube: d.YouTube,
                 Summary: d.Summary,
@@ -203,13 +206,13 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
     nodes = Object.values(nodes);
     links = Object.values(links);
 
-    let simulation = d3.forceSimulation(nodes)
-        .force('link', d3.forceLink(links).id(d => d.id))
-        .force('charge', d3.forceManyBody().strength(d => -d.value * 3))
-        .force('center', d3.forceCenter(WIDTH / 2, HEIGHT / 2))
-        .force('collide', d3.forceCollide().strength(0.95).radius(d => d.value * 1.05));
+    let simulation = forceSimulation(nodes)
+        .force('link', forceLink(links).id(d => d.id))
+        .force('charge', forceManyBody().strength(d => -d.value * 3))
+        .force('center', forceCenter(WIDTH / 2, HEIGHT / 2))
+        .force('collide', forceCollide().strength(0.95).radius(d => d.value * 1.05));
 
-    let svg = d3.select('#container').append('svg')
+    let svg = select('#container').append('svg')
         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
         .attr('class', 'graph');
 
@@ -220,13 +223,13 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
         .attr('class', 'node')
         .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
         .on('mouseover', function(d) {
-            if (d.nodeType == NodeType.VIDEO) {
+            if (d.nodeType == DataView.VIDEO) {
                 node.sort(function(a, b) { // select the parent and sort the path's
                     if (a.id != d.id) return -1; // a is not the hovered element, send "a" to the back
                     else return 1;
                 });
 
-                let title = d3.select(this).append('foreignObject')
+                let title = select(this).append('foreignObject')
                     .attr('id', 'nodeTitle')
                     .attr('class', 'nodeTitleBox_')
                     .attr('x', d.value + 8)
@@ -247,9 +250,9 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
             }
         })
         .on('mouseout', (d, i) => {
-            if (d.nodeType == NodeType.VIDEO) {
+            if (d.nodeType == DataView.VIDEO) {
                 node.style('opacity', 1.0);
-                d3.select('#nodeTitle').remove();
+                select('#nodeTitle').remove();
             }
         })
 
@@ -259,16 +262,16 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
         .attr('r', d => d.value)
         .attr('fill', d => d.color)
         .on("mouseover", function(d) {
-            d3.select(this)
+            select(this)
                 .attr('fill', '#a5e2ff');
         })
         .on("mouseout", function(d) {
-            d3.select(this)
+            select(this)
                 .attr('fill', d.color);
         });
 
     node.append('foreignObject')
-        .filter(d => d.nodeType != NodeType.VIDEO)
+        .filter(d => d.nodeType != DataView.VIDEO)
         .attr('class', 'nodeTextBox')
         .attr('x', d => -d.value)
         .attr('y', d => -d.value)
@@ -284,9 +287,9 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
     });
 
     node.on('click', d => {
-        if (d.nodeType == NodeType.RESEARCH_AXIS) {
+        if (d.nodeType == DataView.RESEARCH_AXIS) {
             researchAxisClicked();
-        } else if (d.nodeType == NodeType.TOPIC) {
+        } else if (d.nodeType == DataView.TOPIC) {
             topicClicked(d.id, videoClicked, researchAxisClicked);
         } else {
             videoClicked(d)
@@ -294,7 +297,7 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
     });
 }
 
-DataView.showVideoView = function(selectedNode, videoClicked, keywordNodeClicked) {
+DataView.showTopicView = function(selectedNode, videoClicked, keywordNodeClicked) {
     let list = document.getElementsByClassName('graph');
     while (list[0]) {
         list[0].parentNode.removeChild(list[0]);
@@ -312,7 +315,7 @@ DataView.showVideoView = function(selectedNode, videoClicked, keywordNodeClicked
                 id: d.Topic,
                 value: 50,
                 color: '#e4e8b9',
-                nodeType: NodeType.TOPIC
+                nodeType: DataView.TOPIC
             };
             nodes[d.Title] = {
                 id: d.Title,
@@ -324,7 +327,7 @@ DataView.showVideoView = function(selectedNode, videoClicked, keywordNodeClicked
                 Date: d.Date,
                 Type: d.Type,
                 color: '#c2e8dc',
-                nodeType: NodeType.VIDEO
+                nodeType: DataView.VIDEO
             };
             let l = {};
             l.source = d.Topic;
@@ -335,13 +338,13 @@ DataView.showVideoView = function(selectedNode, videoClicked, keywordNodeClicked
 
     nodes = Object.values(nodes);
 
-    let simulation = d3.forceSimulation(nodes)
-        .force('link', d3.forceLink(links).id(d => d.id).distance(200))
-        .force('charge', d3.forceManyBody().strength(-2000))
-        .force('center', d3.forceCenter(WIDTH * 0.4, HEIGHT / 2))
-        .force('collide', d3.forceCollide(60).strength(2.0));
+    let simulation = forceSimulation(nodes)
+        .force('link', forceLink(links).id(d => d.id).distance(200))
+        .force('charge', forceManyBody().strength(-2000))
+        .force('center', forceCenter(WIDTH * 0.4, HEIGHT / 2))
+        .force('collide', forceCollide(60).strength(2.0));
 
-    let svg = d3.select('#container').append('svg')
+    let svg = select('#container').append('svg')
         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
         .attr('class', 'graph');
 
@@ -364,16 +367,16 @@ DataView.showVideoView = function(selectedNode, videoClicked, keywordNodeClicked
         .attr('r', d => d.value)
         .attr('fill', d => d.color)
         .on("mouseover", function(d) {
-            d3.select(this)
+            select(this)
                 .attr('fill', '#a5e2ff');
         })
         .on("mouseout", function(d) {
-            d3.select(this)
+            select(this)
                 .attr('fill', d.color);
         });
 
     node.append('foreignObject')
-        .filter(d => d.nodeType == NodeType.TOPIC)
+        .filter(d => d.nodeType == DataView.TOPIC)
         .attr('class', 'nodeTextBox')
         .attr('x', d => -d.value)
         .attr('y', d => -d.value)
@@ -384,7 +387,7 @@ DataView.showVideoView = function(selectedNode, videoClicked, keywordNodeClicked
         .html(d => d.id);
 
     let title = node.append('foreignObject')
-        .filter(d => d.nodeType == NodeType.VIDEO)
+        .filter(d => d.nodeType == DataView.VIDEO)
         .attr('class', 'nodeTitleBox')
         .attr('x', d => d.value + 8)
         .attr('y', d => -d.value)
@@ -418,7 +421,7 @@ DataView.showVideoView = function(selectedNode, videoClicked, keywordNodeClicked
     });
 
     node.on('click', d => {
-        if (d.nodeType == NodeType.VIDEO) {
+        if (d.nodeType == DataView.VIDEO) {
             videoClicked(d);
         } else {
             keywordNodeClicked();
@@ -441,7 +444,7 @@ DataView.showSearchResults = function(results) {
     results.forEach(function(d) {
         nodes[d.ResearchAxis] = {
             id: d.ResearchAxis,
-            nodeType: NodeType.RESEARCH_AXIS,
+            nodeType: DataView.RESEARCH_AXIS,
             value: MAX_SIZE,
             color: '#e4e8b9'
         };
@@ -450,7 +453,7 @@ DataView.showSearchResults = function(results) {
         } else {
             nodes[d.Topic] = {
                 id: d.Topic,
-                nodeType: NodeType.TOPIC,
+                nodeType: DataView.TOPIC,
                 value: MIN_SIZE,
                 color: '#c2e8dc',
             };
@@ -458,7 +461,7 @@ DataView.showSearchResults = function(results) {
         nodes[d.Title] = {
             id: d.Title,
             value: 30,
-            nodeType: NodeType.VIDEO,
+            nodeType: DataView.VIDEO,
             Lecturer: d.Lecturer,
             YouTube: d.YouTube,
             Summary: d.Summary,
@@ -482,13 +485,13 @@ DataView.showSearchResults = function(results) {
     nodes = Object.values(nodes);
     links = Object.values(links);
 
-    let simulation = d3.forceSimulation(nodes)
-        .force('link', d3.forceLink(links).id(d => d.id))
-        .force('charge', d3.forceManyBody().strength(-100))
-        .force('center', d3.forceCenter(WIDTH / 2, HEIGHT / 2))
-        .force('collide', d3.forceCollide().strength(0.5).radius(d => d.value * 1.05));
+    let simulation = forceSimulation(nodes)
+        .force('link', forceLink(links).id(d => d.id))
+        .force('charge', forceManyBody().strength(-100))
+        .force('center', forceCenter(WIDTH / 2, HEIGHT / 2))
+        .force('collide', forceCollide().strength(0.5).radius(d => d.value * 1.05));
 
-    let svg = d3.select('#container').append('svg')
+    let svg = select('#container').append('svg')
         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
         .attr('class', 'graph');
 
@@ -499,13 +502,13 @@ DataView.showSearchResults = function(results) {
         .attr('class', 'node')
         .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
         .on('mouseover', function(d) {
-            if (d.nodeType == NodeType.VIDEO) {
+            if (d.nodeType == DataView.VIDEO) {
                 node.sort(function(a, b) { // select the parent and sort the path's
                     if (a.id != d.id) return -1; // a is not the hovered element, send "a" to the back
                     else return 1;
                 });
 
-                let title = d3.select(this).append('foreignObject')
+                let title = select(this).append('foreignObject')
                     .attr('id', 'nodeTitle')
                     .attr('class', 'nodeTitleBox_')
                     .attr('x', d.value + 8)
@@ -526,9 +529,9 @@ DataView.showSearchResults = function(results) {
             }
         })
         .on('mouseout', (d, i) => {
-            if (d.nodeType == NodeType.VIDEO) {
+            if (d.nodeType == DataView.VIDEO) {
                 node.style('opacity', 1.0);
-                d3.select('#nodeTitle').remove();
+                select('#nodeTitle').remove();
             }
         })
 
@@ -538,16 +541,16 @@ DataView.showSearchResults = function(results) {
         .attr('r', d => d.value)
         .attr('fill', d => d.color)
         .on("mouseover", function(d) {
-            d3.select(this)
+            select(this)
                 .attr('fill', '#a5e2ff');
         })
         .on("mouseout", function(d) {
-            d3.select(this)
+            select(this)
                 .attr('fill', d.color);
         });
 
     node.append('foreignObject')
-        .filter(d => d.nodeType != NodeType.VIDEO)
+        .filter(d => d.nodeType != DataView.VIDEO)
         .attr('class', 'nodeTextBox')
         .attr('x', d => -d.value)
         .attr('y', d => -d.value)
