@@ -1,22 +1,19 @@
-import './style.css';
+import './index.css';
 import DataView from './DataView';
 import SideBar from './SideBar';
+import QueryString from 'query-string';
 
 // Load YouTube Player API code asynchronously.
 var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/player_api";
+tag.src = 'https://www.youtube.com/player_api';
 var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-window.onpopstate = function(event) {
-    console.log(window.location);
-};
-
 let ViewMode = {
-    DEFAULT: 0,
-    TOPIC: 1,
-    RESEARCH_AXIS: 2,
-    VIDEO: 3
+    DEFAULT: 'default',
+    TOPIC: 'topic',
+    RESEARCH_AXIS: 'researchAxis',
+    VIDEO: 'video'
 }
 
 let state = {
@@ -24,47 +21,57 @@ let state = {
     node: null,
 };
 
+function createURLFromState() {
+    return `?mode=${state.mode}&node=${state.node}`;
+}
+
 function videoClicked(node) {
     state.mode = ViewMode.VIDEO;
     state.node = node;
-    window.history.pushState(state, null, '');
-    render();
+    window.history.pushState(state, null, createURLFromState());
+    update();
 }
 
 function backButtonClicked() {
     window.history.back();
 }
 
-function nodeClicked(node) {
-    if (node.nodeType == DataView.RESEARCH_AXIS) {
+function nodeClicked(node, nodeType) {
+    if (nodeType == DataView.RESEARCH_AXIS) {
         state.mode = ViewMode.RESEARCH_AXIS;
         state.node = node;
-        window.history.pushState(state, null, '');
+        window.history.pushState(state, null, createURLFromState());
     } else {
         state.mode = ViewMode.TOPIC;
         state.node = node;
-        window.history.pushState(state, null, '');
+        window.history.pushState(state, null, createURLFromState());
     }
-    render();
+    update();
 }
 
 function onSearch(results) {
-    DataView.showSearchResults(results);
+    // DataView.showSearchResults(results);
 }
 
-function render() {
+function onListItemClicked(url) {
+    state.mode = ViewMode.VIDEO;
+    state.node = url;
+    window.history.pushState(state, null, createURLFromState());
+    update();
+}
+
+function update() {
     if (state.mode == ViewMode.DEFAULT) {
         SideBar.showDefaultMode();
         DataView.showDefaultView(nodeClicked);
         document.getElementById('container').style.width = '65%';
     } else if (state.mode == ViewMode.TOPIC) {
         SideBar.showDefaultMode();
-        DataView.showTopicView(state.node.id, videoClicked, backButtonClicked);
+        DataView.showTopicView(state.node, videoClicked, backButtonClicked);
         document.getElementById('container').style.width = '65%';
     } else if (state.mode == ViewMode.RESEARCH_AXIS) {
-        console.log('RESEARCH_AXIS');
         DataView.showResearchAxisView(
-            state.node.id,
+            state.node,
             videoClicked,
             DataView.showVideoView,
             backButtonClicked);
@@ -76,9 +83,18 @@ function render() {
 
 window.onpopstate = function(event) {
     if (event.state) { state = event.state; }
-    render();
+    update();
+}
+
+let queryState = QueryString.parse(location.search);
+if (queryState.mode && queryState.node) {
+    state = queryState;
+    if (state.mode == ViewMode.VIDEO) {
+        DataView.showDefaultView(nodeClicked);
+    }
 }
 
 window.history.replaceState(state, null, '');
-SideBar.createSideBar(backButtonClicked, onSearch);
-render();
+
+SideBar.createSideBar(backButtonClicked, onSearch, onListItemClicked);
+update();

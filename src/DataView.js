@@ -1,4 +1,3 @@
-// import * as d3 from 'd3';
 import { select, selectAll } from 'd3-selection';
 import { forceSimulation, forceLink, forceCenter, forceManyBody, forceCollide } from 'd3-force';
 
@@ -140,22 +139,22 @@ DataView.showDefaultView = function(clicked) {
     });
 
     node.on('click', d => {
-        console.log(d);
-        clicked(d);
+        clicked(d.id, d.nodeType);
     });
 
     defaultViewCreated = true;
 };
 
 DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicked, researchAxisClicked) {
-    console.log(researchAxis);
     let list = document.getElementsByClassName('graph');
     while (list[0]) {
         list[0].parentNode.removeChild(list[0]);
     }
 
-    let topicView = document.getElementById('topicView');
-    topicView.style.display = 'none';
+    if (defaultViewCreated) {
+        let topicView = document.getElementById('topicView');
+        topicView.style.display = 'none';
+    }
 
     let nodes = {};
     let links = {};
@@ -292,7 +291,7 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
         } else if (d.nodeType == DataView.TOPIC) {
             topicClicked(d.id, videoClicked, researchAxisClicked);
         } else {
-            videoClicked(d)
+            videoClicked(d.YouTube)
         }
     });
 }
@@ -303,8 +302,10 @@ DataView.showTopicView = function(selectedNode, videoClicked, keywordNodeClicked
         list[0].parentNode.removeChild(list[0]);
     }
 
-    let topicView = document.getElementById('topicView');
-    topicView.style.display = 'none';
+    if (defaultViewCreated) {
+        let topicView = document.getElementById('topicView');
+        topicView.style.display = 'none';
+    }
 
     let nodes = {};
     let links = [];
@@ -422,7 +423,7 @@ DataView.showTopicView = function(selectedNode, videoClicked, keywordNodeClicked
 
     node.on('click', d => {
         if (d.nodeType == DataView.VIDEO) {
-            videoClicked(d);
+            videoClicked(d.YouTube);
         } else {
             keywordNodeClicked();
         }
@@ -435,8 +436,10 @@ DataView.showSearchResults = function(results) {
         list[0].parentNode.removeChild(list[0]);
     }
 
-    let topicView = document.getElementById('topicView');
-    topicView.style.display = 'none';
+    if (defaultViewCreated) {
+        let topicView = document.getElementById('topicView');
+        topicView.style.display = 'none';
+    }
 
     let nodes = {};
     let links = {};

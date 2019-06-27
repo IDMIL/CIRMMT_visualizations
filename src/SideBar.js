@@ -1,11 +1,14 @@
-import Fuse from 'fuse.js';
+import './SideBar.css';
 import data from './data.csv';
+import Fuse from 'fuse.js';
 import logo from './logo.png';
+
+let SideBar = {};
 
 let element;
 let sideBarFrontContainer;
-let SideBar = {};
 let searchBar;
+let videoList;
 
 const Mode = {
     DEFAULT: 0,
@@ -14,7 +17,41 @@ const Mode = {
 
 let mode = Mode.DEFAULT;
 
-SideBar.createSideBar = function(backButtonClicked, onSearch) {
+function updateVideoList(list, onListItemClicked) {
+    while (videoList.firstChild) {
+        videoList.removeChild(videoList.firstChild);
+    }
+
+    list.forEach((d) => {
+        let videoListItem = document.createElement('div');
+        videoListItem.classList.add('videoListItem');
+
+        let videoListItemThumb = new Image();
+        videoListItemThumb.classList.add('videoListItemThumb');
+        videoListItemThumb.src = `http://img.youtube.com/vi/${d.YouTube}/3.jpg`;
+        videoListItemThumb.onclick = function() {
+            onListItemClicked(d.YouTube);
+        }
+        videoListItem.appendChild(videoListItemThumb);
+
+        let videoListItemDescription = document.createElement('div');
+        videoListItemDescription.classList.add('videoListItemDescription');
+        videoListItem.appendChild(videoListItemDescription);
+
+        let videoListItemLecturer = document.createElement('div');
+        videoListItemLecturer.classList.add('videoListItemLecturer');
+        videoListItemLecturer.innerHTML = d.Lecturer;
+        videoListItemDescription.appendChild(videoListItemLecturer);
+
+        let videoListItemTitle = document.createElement('div');
+        videoListItemTitle.classList.add('videoListItemTitle');
+        videoListItemTitle.innerHTML = d.Title;
+        videoListItemDescription.appendChild(videoListItemTitle);
+        videoList.appendChild(videoListItem);
+    });
+}
+
+SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked) {
     element = document.createElement('div');
     element.classList.add('sideBar');
 
@@ -25,11 +62,13 @@ SideBar.createSideBar = function(backButtonClicked, onSearch) {
     sideBarTop.classList.add('sideBarTop');
     sideBarFrontContainer.appendChild(sideBarTop);
 
+    // Logo
     const sideBarLogo = new Image();
     sideBarLogo.src = logo;
     sideBarLogo.style.width = '20%';
     sideBarTop.appendChild(sideBarLogo);
 
+    // Title
     let sideBarTitle = document.createElement('div');
     sideBarTitle.classList.add('sideBarTitle');
     let title1 = document.createElement('div');
@@ -40,11 +79,9 @@ SideBar.createSideBar = function(backButtonClicked, onSearch) {
     title2.classList.add('sideBarTitleSpacing');
     title2.innerHTML = '<span>L</span><span>E</span><span>C</span><span>T</span><span>U</span><span>R</span><span>E</span><span>S</span>';
     sideBarTitle.appendChild(title2);
-    // sideBarTitle
-    // sideBarTitle.classList.add('sideBarTitle');
-    // sideBarTitle.innerHTML = 'Distinguished Lectures';
     sideBarTop.appendChild(sideBarTitle);
 
+    // Search bar
     let searchBarContainer = document.createElement('div');
     searchBarContainer.classList.add('searchBarContainer');
     sideBarFrontContainer.appendChild(searchBarContainer);
@@ -57,36 +94,44 @@ SideBar.createSideBar = function(backButtonClicked, onSearch) {
 
     document.body.appendChild(element);
 
-    searchBar.focus();
+    let timeout = null;
 
     searchBar.onkeyup = function() {
-        var options = {
-            shouldSort: true,
-            threshold: 0.1,
-            location: 0,
-            distance: 100,
-            maxPatternLength: 32,
-            minMatchCharLength: 1,
-            keys: [
-                'Title',
-                'Lecturer'
-            ]
-        };
-        var fuse = new Fuse(data, options);
-        // onSearch(fuse.search(searchBar.value));
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            if (searchBar.value != '') {
+                var options = {
+                    shouldSort: true,
+                    threshold: 0.1,
+                    location: 0,
+                    distance: 100,
+                    maxPatternLength: 32,
+                    minMatchCharLength: 1,
+                    keys: [
+                        'Title',
+                        'Lecturer'
+                    ]
+                };
+                var fuse = new Fuse(data, options);
+                updateVideoList(fuse.search(searchBar.value), onListItemClicked);
+            }
+        }, 400);
     }
 
-    // let backButton = document.createElement('div');
-    // backButton.classList.add('button');
-    // backButton.innerHTML = 'Back';
-    // backButton.onclick = backButtonClicked;
-    // element.appendChild(backButton);
+    searchBar.focus();
+
+    // Video list
+    videoList = document.createElement('div');
+    videoList.id = 'videoList';
+    sideBarFrontContainer.appendChild(videoList);
+
+    updateVideoList(data.slice(0, 5), onListItemClicked);
 }
 
 SideBar.showDefaultMode = function() {
     element.style.width = '35%';
 
-    let elem = document.getElementById('videoContainer');
+    let elem = document.getElementById('playerContainer');
     if (elem) {
         elem.parentNode.removeChild(elem);
     }
@@ -98,50 +143,57 @@ SideBar.showDefaultMode = function() {
     }, 500);
 }
 
-SideBar.showVideo = function(node) {
-    let elem = document.getElementById('videoContainer');
+SideBar.showVideo = function(url) {
+    let node;
+    data.forEach((d) => {
+        if (d.YouTube == url) {
+            node = d;
+        }
+    })
+
+    let elem = document.getElementById('playerContainer');
     if (elem) {
         elem.parentNode.removeChild(elem);
     }
 
-    let videoContainer = document.createElement('div');
-    videoContainer.id = 'videoContainer';
+    let playerContainer = document.createElement('div');
+    playerContainer.id = 'playerContainer';
 
-    let videoLecturer = document.createElement('div');
-    videoLecturer.classList.add('videoLecturer');
-    videoLecturer.innerHTML = node.Lecturer;
-    videoContainer.appendChild(videoLecturer);
+    let playerLecturer = document.createElement('div');
+    playerLecturer.classList.add('playerLecturer');
+    playerLecturer.innerHTML = node.Lecturer;
+    playerContainer.appendChild(playerLecturer);
 
-    let videoAffiliation = document.createElement('div');
-    videoAffiliation.classList.add('videoAffiliation');
-    videoAffiliation.innerHTML = node.Affiliation;
-    videoContainer.appendChild(videoAffiliation);
+    let playerAffiliation = document.createElement('div');
+    playerAffiliation.classList.add('playerAffiliation');
+    playerAffiliation.innerHTML = node.Affiliation;
+    playerContainer.appendChild(playerAffiliation);
 
-    let videoTitle = document.createElement('div');
-    videoTitle.classList.add('videoTitle');
-    videoTitle.innerHTML = node.id;
-    videoContainer.appendChild(videoTitle);
+    let playerTitle = document.createElement('div');
+    playerTitle.classList.add('playerTitle');
+    playerTitle.innerHTML = node.Title;
+    playerContainer.appendChild(playerTitle);
 
-    let videoDate = document.createElement('div');
+    let playerDate = document.createElement('div');
     let dateObj = new Date(node.Date);
-    videoDate.classList.add('videoDate');
-    videoDate.innerHTML = node.Type + ', ' + dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    videoContainer.appendChild(videoDate);
+    playerDate.classList.add('playerDate');
+    playerDate.innerHTML = node.Type + ', ' + dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    playerContainer.appendChild(playerDate);
 
-    let video = document.createElement('video');
-    videoContainer.appendChild(video);
-    video.id = 'ytvideo';
+    let player = document.createElement('player');
+    playerContainer.appendChild(player);
+    player.id = 'ytvideo';
 
-    let videoSummary = document.createElement('div');
-    videoSummary.classList.add('videoSummary');
-    videoSummary.innerHTML = node.Summary;
-    videoContainer.appendChild(videoSummary);
+    let playerSummary = document.createElement('div');
+    playerSummary.classList.add('playerSummary');
+    playerSummary.innerHTML = node.Summary;
+    playerContainer.appendChild(playerSummary);
 
     sideBarFrontContainer.style.display = 'none';
     element.style.width = '45%';
 
     setTimeout(() => {
-        element.appendChild(videoContainer);
+        element.appendChild(playerContainer);
 
         let player = new YT.Player('ytvideo', {
             height: '180',
