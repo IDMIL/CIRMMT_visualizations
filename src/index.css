@@ -1,3 +1,12 @@
+:root {
+    --sideMargin: 3vw;
+    --darkColor: #b6b9a7;
+    --middleColor: #c3d0c3;
+    --middleColor2: #e1e8ce;
+    --middleColor3: #f7f9ef;
+    --lightColor: #FAFFFB;
+}
+
 html,
 body {
     margin: 0;

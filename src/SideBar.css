@@ -1,12 +1,3 @@
-:root {
-    --sideMargin: 3vw;
-    --darkColor: #BBCCC9;
-    --middleColor: #CFDEDA;
-    --middleColor2: #DEEDE7;
-    --middleColor3: #E9F7EF;
-    --lightColor: #FAFFFB
-}
-
 .sideBar {
     height: 100%;
     width: 35%;

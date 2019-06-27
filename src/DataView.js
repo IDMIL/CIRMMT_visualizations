@@ -15,11 +15,11 @@ DataView.RESEARCH_AXIS = 0;
 DataView.TOPIC = 1;
 DataView.VIDEO = 2;
 
-let DARK_COLOR = '#BBCCC9';
-let MIDDLE_COLOR = '#CFDEDA';
-let MIDDLE_COLOR2 = '#DEEDE7';
-let MIDDLE_COLOR3 = '#E9F7EF';
-let LIGHT_COLOR = '#FAFFFB';
+let DARK_COLOR = 'var(--darkColor)';
+let MIDDLE_COLOR = 'var(--middleColor)';
+let MIDDLE_COLOR2 = 'var(--middleColor2)';
+let MIDDLE_COLOR3 = 'var(--middleColor3)';
+let LIGHT_COLOR = 'var(--light_color)';
 
 var defaultViewCreated = false;
 
