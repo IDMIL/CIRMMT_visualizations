@@ -49,9 +49,7 @@ function nodeClicked(node, nodeType) {
     update();
 }
 
-function onSearch(results) {
-    // DataView.showSearchResults(results);
-}
+function onSearch(results) {}
 
 function onListItemClicked(url) {
     state.mode = ViewMode.VIDEO;

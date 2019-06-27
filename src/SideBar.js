@@ -58,28 +58,35 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
     sideBarFrontContainer = document.createElement('div');
     element.appendChild(sideBarFrontContainer);
 
-    let sideBarTop = document.createElement('div');
-    sideBarTop.classList.add('sideBarTop');
-    sideBarFrontContainer.appendChild(sideBarTop);
+    // let sideBarTop = document.createElement('div');
+    // sideBarTop.classList.add('sideBarTop');
+    // sideBarFrontContainer.appendChild(sideBarTop);
 
     // Logo
-    const sideBarLogo = new Image();
-    sideBarLogo.src = logo;
-    sideBarLogo.style.width = '20%';
-    sideBarTop.appendChild(sideBarLogo);
+    // const sideBarLogo = new Image();
+    // sideBarLogo.src = logo;
+    // sideBarLogo.style.width = '15%';
+    // sideBarTop.appendChild(sideBarLogo);
 
     // Title
-    let sideBarTitle = document.createElement('div');
-    sideBarTitle.classList.add('sideBarTitle');
-    let title1 = document.createElement('div');
-    title1.classList.add('sideBarTitleSpacing');
-    title1.innerHTML = '<span>D</span><span>I</span><span>S</span><span>T</span><span>I</span><span>N</span><span>G</span><span>U</span><span>I</span><span>S</span><span>H</span><span>E</span><span>D</span>';
-    sideBarTitle.appendChild(title1);
-    let title2 = document.createElement('div');
-    title2.classList.add('sideBarTitleSpacing');
-    title2.innerHTML = '<span>L</span><span>E</span><span>C</span><span>T</span><span>U</span><span>R</span><span>E</span><span>S</span>';
-    sideBarTitle.appendChild(title2);
-    sideBarTop.appendChild(sideBarTitle);
+    // let sideBarTitle = document.createElement('div');
+    // sideBarTitle.classList.add('sideBarTitle');
+    // let title1 = document.createElement('div');
+    // title1.classList.add('sideBarTitleSpacing');
+    // title1.innerHTML = '<span>D</span><span>I</span><span>S</span><span>T</span><span>I</span><span>N</span><span>G</span><span>U</span><span>I</span><span>S</span><span>H</span><span>E</span><span>D</span>';
+    // sideBarTitle.appendChild(title1);
+    // let title2 = document.createElement('div');
+    // title2.classList.add('sideBarTitleSpacing');
+    // title2.innerHTML = '<span>L</span><span>E</span><span>C</span><span>T</span><span>U</span><span>R</span><span>E</span><span>S</span>';
+    // sideBarTitle.appendChild(title2);
+
+    // sideBarTitle.innerHTML = 'Centre for Interdisciplinary Research in Music Media and Technology';
+    // sideBarTop.appendChild(sideBarTitle);
+
+    // let sideBarSubTitle = document.createElement('div');
+    // sideBarSubTitle.classList.add('sideBarSubTitle');
+    // sideBarSubTitle.innerHTML = 'Speaker Series Video Browser';
+    // sideBarFrontContainer.appendChild(sideBarSubTitle);
 
     // Search bar
     let searchBarContainer = document.createElement('div');
