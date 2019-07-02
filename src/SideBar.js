@@ -25,13 +25,13 @@ function updateVideoList(list, onListItemClicked) {
     list.forEach((d) => {
         let videoListItem = document.createElement('div');
         videoListItem.classList.add('videoListItem');
+        videoListItem.onclick = function() {
+            onListItemClicked(d.YouTube);
+        }
 
         let videoListItemThumb = new Image();
         videoListItemThumb.classList.add('videoListItemThumb');
         videoListItemThumb.src = `http://img.youtube.com/vi/${d.YouTube}/3.jpg`;
-        videoListItemThumb.onclick = function() {
-            onListItemClicked(d.YouTube);
-        }
         videoListItem.appendChild(videoListItemThumb);
 
         let videoListItemDescription = document.createElement('div');
@@ -42,6 +42,13 @@ function updateVideoList(list, onListItemClicked) {
         videoListItemLecturer.classList.add('videoListItemLecturer');
         videoListItemLecturer.innerHTML = d.Lecturer;
         videoListItemDescription.appendChild(videoListItemLecturer);
+
+        let videoListItemDate = document.createElement('div');
+        videoListItemDate.classList.add('videoListItemDate');
+        let dateObj = new Date(d.Date);
+        videoListItemDate.innerHTML = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        videoListItemDescription.appendChild(videoListItemDate);
+        videoList.appendChild(videoListItem);
 
         let videoListItemTitle = document.createElement('div');
         videoListItemTitle.classList.add('videoListItemTitle');
@@ -132,7 +139,7 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
     videoList.id = 'videoList';
     sideBarFrontContainer.appendChild(videoList);
 
-    updateVideoList(data.slice(0, 5), onListItemClicked);
+    updateVideoList(data.filter(d => d.Title).slice(-5), onListItemClicked);
 }
 
 SideBar.showDefaultMode = function() {

@@ -79,6 +79,11 @@
     margin-bottom: 0.5em;
 }
 
+.videoListItemDate {
+    font-size: 0.8vw;
+    margin-bottom: 0.5em;
+}
+
 .videoListItemThumb {
     width: 120px;
     height: 90px;

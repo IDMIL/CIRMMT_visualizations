@@ -64,3 +64,5 @@ typings/
 
 *.sublime-project
 *.sublime-workspace
+
+sdkconfig *

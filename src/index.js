@@ -33,7 +33,8 @@ function videoClicked(node) {
 }
 
 function backButtonClicked() {
-    window.history.back();
+    state.mode = ViewMode.DEFAULT;
+    update();
 }
 
 function nodeClicked(node, nodeType) {
