@@ -89,21 +89,30 @@ DataView.showDefaultView = function(clicked) {
         .attr('class', 'node')
         .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
         .on("mouseover", function(d) {
-            let keys = Object.keys(links);
-            keys.forEach((k) => {
-                if (k.includes(d.researchAxis)) {
-                    let l = links[k];
-                    link.append('line')
-                        .data([l])
-                        .attr('class', 'link')
-                        .attr('stroke-width', 3)
-                        .attr('stroke', DARK_COLOR)
-                        .attr('x1', l.source.x)
-                        .attr('y1', l.source.y)
-                        .attr('x2', l.target.x)
-                        .attr('y2', l.target.y);
-                }
-            });
+            let createLink = function(l) {
+                link.append('line')
+                    .data([l])
+                    .attr('class', 'link')
+                    .attr('stroke-width', 3)
+                    .attr('stroke', DARK_COLOR)
+                    .attr('x1', l.source.x)
+                    .attr('y1', l.source.y)
+                    .attr('x2', l.target.x)
+                    .attr('y2', l.target.y);
+            }
+            if (d.nodeType == DataView.RESEARCH_AXIS) {
+                Object.keys(links).forEach((l) => {
+                    if (links[l].source.id == d.id) {
+                        createLink(links[l]);
+                    }
+                });
+            } else if (d.nodeType == DataView.TOPIC) {
+                Object.keys(links).forEach((l) => {
+                    if (links[l].target.id == d.id) {
+                        createLink(links[l]);
+                    }
+                });
+            }
         })
         .on("mouseout", function(d) {
             selectAll('.link')

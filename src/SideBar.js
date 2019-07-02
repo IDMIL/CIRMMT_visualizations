@@ -123,7 +123,11 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
                     minMatchCharLength: 1,
                     keys: [
                         'Title',
-                        'Lecturer'
+                        'Lecturer',
+                        'Topic',
+                        'Keywords',
+                        'Summary',
+                        'Affiliation'
                     ]
                 };
                 var fuse = new Fuse(data, options);
