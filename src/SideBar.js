@@ -7,6 +7,7 @@ let SideBar = {};
 
 let element;
 let sideBarFrontContainer;
+let sideBarFrontLabel;
 let searchBar;
 let videoList;
 
@@ -17,9 +18,17 @@ const Mode = {
 
 let mode = Mode.DEFAULT;
 
-function updateVideoList(list, onListItemClicked) {
+const NUM_LATEST_VIDEOS = 5;
+
+function updateVideoList(list, onListItemClicked, isSearchResults) {
     while (videoList.firstChild) {
         videoList.removeChild(videoList.firstChild);
+    }
+
+    if (isSearchResults) {
+        sideBarFrontLabel.innerHTML = `Search results (${list.length} of ${data.length})`;
+    } else {
+        sideBarFrontLabel.innerHTML = `Latest videos (${list.length} of ${data.length})`;
     }
 
     list.forEach((d) => {
@@ -60,40 +69,11 @@ function updateVideoList(list, onListItemClicked) {
 
 SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked) {
     element = document.createElement('div');
-    element.classList.add('sideBar');
+    element.id = 'sideBar';
 
     sideBarFrontContainer = document.createElement('div');
+    sideBarFrontContainer.id = 'sideBarFrontContainer';
     element.appendChild(sideBarFrontContainer);
-
-    // let sideBarTop = document.createElement('div');
-    // sideBarTop.classList.add('sideBarTop');
-    // sideBarFrontContainer.appendChild(sideBarTop);
-
-    // Logo
-    // const sideBarLogo = new Image();
-    // sideBarLogo.src = logo;
-    // sideBarLogo.style.width = '15%';
-    // sideBarTop.appendChild(sideBarLogo);
-
-    // Title
-    // let sideBarTitle = document.createElement('div');
-    // sideBarTitle.classList.add('sideBarTitle');
-    // let title1 = document.createElement('div');
-    // title1.classList.add('sideBarTitleSpacing');
-    // title1.innerHTML = '<span>D</span><span>I</span><span>S</span><span>T</span><span>I</span><span>N</span><span>G</span><span>U</span><span>I</span><span>S</span><span>H</span><span>E</span><span>D</span>';
-    // sideBarTitle.appendChild(title1);
-    // let title2 = document.createElement('div');
-    // title2.classList.add('sideBarTitleSpacing');
-    // title2.innerHTML = '<span>L</span><span>E</span><span>C</span><span>T</span><span>U</span><span>R</span><span>E</span><span>S</span>';
-    // sideBarTitle.appendChild(title2);
-
-    // sideBarTitle.innerHTML = 'Centre for Interdisciplinary Research in Music Media and Technology';
-    // sideBarTop.appendChild(sideBarTitle);
-
-    // let sideBarSubTitle = document.createElement('div');
-    // sideBarSubTitle.classList.add('sideBarSubTitle');
-    // sideBarSubTitle.innerHTML = 'Speaker Series Video Browser';
-    // sideBarFrontContainer.appendChild(sideBarSubTitle);
 
     // Search bar
     let searchBarContainer = document.createElement('div');
@@ -106,6 +86,10 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
     searchBar.classList.add('searchBar');
     searchBarContainer.appendChild(searchBar);
 
+    sideBarFrontLabel = document.createElement('div');
+    sideBarFrontLabel.id = 'sideBarFrontLabel';
+    sideBarFrontContainer.appendChild(sideBarFrontLabel);
+
     document.body.appendChild(element);
 
     let timeout = null;
@@ -116,7 +100,7 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
             if (searchBar.value != '') {
                 var options = {
                     shouldSort: true,
-                    threshold: 0.1,
+                    threshold: 0.3,
                     location: 0,
                     distance: 100,
                     maxPatternLength: 32,
@@ -131,7 +115,9 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
                     ]
                 };
                 var fuse = new Fuse(data, options);
-                updateVideoList(fuse.search(searchBar.value), onListItemClicked);
+                updateVideoList(fuse.search(searchBar.value), onListItemClicked, true);
+            } else {
+                updateVideoList(data.filter(d => d.Title).slice(-NUM_LATEST_VIDEOS), onListItemClicked, false);
             }
         }, 400);
     }
@@ -143,7 +129,7 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
     videoList.id = 'videoList';
     sideBarFrontContainer.appendChild(videoList);
 
-    updateVideoList(data.filter(d => d.Title).slice(-5), onListItemClicked);
+    updateVideoList(data.filter(d => d.Title).slice(-NUM_LATEST_VIDEOS), onListItemClicked, false);
 }
 
 SideBar.showDefaultMode = function() {
@@ -178,23 +164,23 @@ SideBar.showVideo = function(url) {
     playerContainer.id = 'playerContainer';
 
     let playerLecturer = document.createElement('div');
-    playerLecturer.classList.add('playerLecturer');
+    playerLecturer.id = 'playerLecturer';
     playerLecturer.innerHTML = node.Lecturer;
     playerContainer.appendChild(playerLecturer);
 
     let playerAffiliation = document.createElement('div');
-    playerAffiliation.classList.add('playerAffiliation');
+    playerAffiliation.id = 'playerAffiliation';
     playerAffiliation.innerHTML = node.Affiliation;
     playerContainer.appendChild(playerAffiliation);
 
     let playerTitle = document.createElement('div');
-    playerTitle.classList.add('playerTitle');
+    playerTitle.id = 'playerTitle';
     playerTitle.innerHTML = node.Title;
     playerContainer.appendChild(playerTitle);
 
     let playerDate = document.createElement('div');
     let dateObj = new Date(node.Date);
-    playerDate.classList.add('playerDate');
+    playerDate.id = 'playerDate';
     playerDate.innerHTML = node.Type + ', ' + dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     playerContainer.appendChild(playerDate);
 
@@ -203,7 +189,7 @@ SideBar.showVideo = function(url) {
     player.id = 'ytvideo';
 
     let playerSummary = document.createElement('div');
-    playerSummary.classList.add('playerSummary');
+    playerSummary.id = 'playerSummary';
     playerSummary.innerHTML = node.Summary;
     playerContainer.appendChild(playerSummary);
 

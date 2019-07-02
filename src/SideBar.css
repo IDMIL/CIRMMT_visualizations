@@ -1,48 +1,24 @@
-.sideBar {
+#sideBar {
     height: 100%;
     width: 35%;
     position: fixed;
     top: 0;
     right: 0;
-    background: var(--middleColor3);
-    padding: var(--sideMargin);
     transition: width 0.5s;
     overflow-y: scroll;
 }
 
-.sideBarTop {
-    display: flex;
-    align-items: center;
+#sideBarFrontContainer {
+    margin: var(--sideMargin);
 }
 
-.sideBarTitle {
-    margin-left: 1vw;
-    font-size: 1vw;
-}
-
-.sideBarSubTitle {
-    margin-top: 1em;
-    width: 100%;
-    text-align: center;
-    font-size: 1.5vw;
-}
-
-.sideBarTitleSpacing {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    font-size: 1.5vw;
+#sideBarFrontContainer>div {
+    margin-bottom: 1vw;
 }
 
 .searchBarContainer {
-    padding: 1.5vh;
-    background: #fff;
-}
-
-.searchBarContainer:focus-within {
-    outline-style: solid;
-    outline-width: thin;
-    outline-color: var(--darkColor);
+    padding: 0.6vw;
+    background: #f8f8f8;
 }
 
 .searchBar {
@@ -50,18 +26,18 @@
     border: none;
     outline: none;
     box-shadow: none;
-    font-size: 2.5vh;
+    font-size: 1.2vw;
+    background: #f8f8f8;
 }
 
 /* VIDEO LIST */
 
-#videoList {
-    margin-top: 3vw;
+#videoList>div {
+    margin-bottom: 1vw;
 }
 
 .videoListItem {
     display: flex;
-    margin-bottom: 1vw;
 }
 
 .videoListItemDescription {
@@ -82,6 +58,7 @@
 .videoListItemDate {
     font-size: 0.8vw;
     margin-bottom: 0.5em;
+    color: var(--textAlt);
 }
 
 .videoListItemThumb {
@@ -93,33 +70,35 @@
 /* VIDEO PLAYER */
 
 #playerContainer {
-    overflow-y: scroll;
+    margin: var(--sideMargin);
 }
 
-.playerLecturer {
+#playerLecturer {
     font-size: 3vh;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
-.playerAffiliation {
+#playerAffiliation {
     font-size: 1.75vh;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
+    color: var(--textAlt);
 }
 
-.playerDate {
+#playerDate {
     font-size: 1.75vh;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
+    color: var(--textAlt);
 }
 
-.playerTitle {
+#playerTitle {
     font-size: 2.75vh;
     margin-top: 1vh;
 }
 
-.playerSummary {
+#playerSummary {
     font-size: 2vh;
     line-height: 1.75em;
     text-align: justify;
@@ -128,8 +107,8 @@
 #ytvideo {
     width: 100%;
     height: 35vh;
-    margin-left: 0.5vw;
-    margin-right: 0.5vw;
+    padding-left: 0.5vw;
+    padding-right: 0.5vw;
     margin-top: 3vh;
     margin-bottom: 3vh;
 }
