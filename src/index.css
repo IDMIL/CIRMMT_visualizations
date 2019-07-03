@@ -33,13 +33,11 @@ body {
 .graph {
     width: 100%;
     height: 100%;
-    font-size: 10pt;
 }
 
 #topicView {
     width: 100%;
     height: 100%;
-    font-size: 10pt;
 }
 
 .node {
@@ -53,6 +51,7 @@ body {
     padding-right: 8pt;
     user-select: none;
     pointer-events: none;
+    font-size: 10pt;
 }
 
 .nodeTextBoxBody {
@@ -75,30 +74,11 @@ body {
 
 .nodeLecturer {
     letter-spacing: 0.05em;
-    font-size: 2vh;
+    font-size: 10pt;
     text-transform: uppercase;
 }
 
 .nodeTitle {
-    font-size: 1.75vh;
+    font-size: 8pt;
     margin-top: 0.5em;
-}
-
-.button {
-    margin: var(--side_margin);
-    background: #DDD;
-    font: 12pt arial, sans-serif;
-    height: 2em;
-    text-align: center;
-    line-height: 2em;
-    user-select: none;
-    cursor: pointer;
-}
-
-.button:hover {
-    background: #FFF;
-}
-
-.noBox {
-    display: none;
 }

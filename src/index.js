@@ -1,4 +1,6 @@
 import './index.css';
+import data from './data.csv';
+
 import DataView from './DataView';
 import SideBar from './SideBar';
 import QueryString from 'query-string';
@@ -25,27 +27,30 @@ function createURLFromState() {
     return `?mode=${state.mode}&node=${state.node}`;
 }
 
-function videoClicked(node) {
+function videoClicked(selectedNode) {
     state.mode = ViewMode.VIDEO;
-    state.node = node;
-    window.history.pushState(state, null, createURLFromState());
+    state.node = selectedNode.id;
+    window.history.replaceState(state, null, createURLFromState());
+    // document.title = 
+    // console.log(node);
     update();
 }
 
 function backButtonClicked() {
     state.mode = ViewMode.DEFAULT;
+    window.history.replaceState(state, null, window.location.pathname);
     update();
 }
 
-function nodeClicked(node, nodeType) {
-    if (nodeType == DataView.RESEARCH_AXIS) {
+function nodeClicked(selectedNode) {
+    if (selectedNode.nodeType == DataView.RESEARCH_AXIS) {
         state.mode = ViewMode.RESEARCH_AXIS;
-        state.node = node;
-        window.history.pushState(state, null, createURLFromState());
+        state.node = selectedNode.id;
+        window.history.replaceState(state, null, createURLFromState());
     } else {
         state.mode = ViewMode.TOPIC;
-        state.node = node;
-        window.history.pushState(state, null, createURLFromState());
+        state.node = selectedNode.id;
+        window.history.replaceState(state, null, createURLFromState());
     }
     update();
 }
@@ -55,7 +60,7 @@ function onSearch(results) {}
 function onListItemClicked(url) {
     state.mode = ViewMode.VIDEO;
     state.node = url;
-    window.history.pushState(state, null, createURLFromState());
+    window.history.replaceState(state, null, createURLFromState());
     update();
 }
 
@@ -72,7 +77,7 @@ function update() {
         DataView.showResearchAxisView(
             state.node,
             videoClicked,
-            DataView.showVideoView,
+            nodeClicked,
             backButtonClicked);
     } else if (state.mode == ViewMode.VIDEO) {
         SideBar.showVideo(state.node);

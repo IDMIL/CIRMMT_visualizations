@@ -1,7 +1,9 @@
 import { select, selectAll } from 'd3-selection';
 import { forceSimulation, forceLink, forceCenter, forceManyBody, forceCollide } from 'd3-force';
 
-import data from './data.csv';
+import rawData from './data.csv';
+
+const data = rawData.filter(d => d.Title);
 
 const WIDTH = 700;
 const HEIGHT = 700;
@@ -39,31 +41,28 @@ DataView.showDefaultView = function(clicked) {
     let links = {};
 
     data.forEach(function(d) {
-        if (d.Title) {
-            nodes[d.ResearchAxis] = {
-                id: d.ResearchAxis,
-                value: MAX_SIZE,
-                color: MIDDLE_COLOR,
-                nodeType: DataView.RESEARCH_AXIS,
+        nodes[d.ResearchAxis] = {
+            id: d.ResearchAxis,
+            value: MAX_SIZE,
+            color: MIDDLE_COLOR,
+            nodeType: DataView.RESEARCH_AXIS,
+            researchAxis: d.ResearchAxis
+        };
+        if (nodes[d.Topic] != undefined) {
+            nodes[d.Topic].value += 3;
+        } else {
+            nodes[d.Topic] = {
+                id: d.Topic,
+                value: MIN_SIZE,
+                color: MIDDLE_COLOR2,
+                nodeType: DataView.TOPIC,
                 researchAxis: d.ResearchAxis
             };
-            if (nodes[d.Topic] != undefined) {
-                nodes[d.Topic].value += 3;
-            } else {
-                nodes[d.Topic] = {
-                    id: d.Topic,
-                    value: MIN_SIZE,
-                    color: MIDDLE_COLOR2,
-                    nodeType: DataView.TOPIC,
-                    researchAxis: d.ResearchAxis
-                };
-            }
-            let l = {};
-            l.source = d.ResearchAxis;
-            l.target = d.Topic;
-            l.draw = false;
-            links[`${d.ResearchAxis}->${d.Topic}`] = l;
         }
+        let l = {};
+        l.source = d.ResearchAxis;
+        l.target = d.Topic;
+        links[`${d.ResearchAxis}->${d.Topic}`] = l;
     });
 
     let nodes_list = Object.values(nodes);
@@ -152,13 +151,13 @@ DataView.showDefaultView = function(clicked) {
     });
 
     node.on('click', d => {
-        clicked(d.id, d.nodeType);
+        clicked(d);
     });
 
     defaultViewCreated = true;
 };
 
-DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicked, researchAxisClicked) {
+DataView.showResearchAxisView = function(selectedNode, videoClicked, topicClicked, back) {
     let list = document.getElementsByClassName('graph');
     while (list[0]) {
         list[0].parentNode.removeChild(list[0]);
@@ -173,7 +172,7 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
     let links = {};
 
     data.forEach(function(d) {
-        if (d.ResearchAxis == researchAxis) {
+        if (d.ResearchAxis == selectedNode) {
             nodes[d.ResearchAxis] = {
                 id: d.ResearchAxis,
                 nodeType: DataView.RESEARCH_AXIS,
@@ -191,27 +190,20 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
                 };
             }
             nodes[d.Title] = {
-                id: d.Title,
+                id: d.YouTube,
                 value: 30,
                 nodeType: DataView.VIDEO,
-                Lecturer: d.Lecturer,
-                YouTube: d.YouTube,
-                Summary: d.Summary,
-                Affiliation: d.Affiliation,
-                Date: d.Date,
-                Type: d.Type,
                 color: MIDDLE_COLOR3
             };
+            Object.assign(nodes[d.Title], d);
             let l = {};
             l.source = d.ResearchAxis;
             l.target = d.Topic;
-            l.draw = false;
             links[`${d.ResearchAxis}->${d.Topic}`] = l;
             l = {};
-            l.source = d.Title;
-            l.target = d.Topic;
-            l.draw = false;
-            links[`${d.Title}->${d.Topic}`] = l;
+            l.source = d.Topic;
+            l.target = d.YouTube;
+            links[`${d.YouTube}->${d.Topic}`] = l;
         }
     });
 
@@ -241,13 +233,21 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
                     else return 1;
                 });
 
+                let topicX;
+                nodes.forEach((q) => {
+                    if (q.nodeType == DataView.TOPIC && q.id == d.Topic) {
+                        topicX = q.x;
+                    }
+                });
+
                 let title = select(this).append('foreignObject')
                     .attr('id', 'nodeTitle')
                     .attr('class', 'nodeTitleBox_')
-                    .attr('x', d.value + 8)
+                    .attr('x', d.x >= topicX ? d.value + 8 : -d.value - 8 - 150)
                     .attr('y', -d.value)
                     .attr('width', 150)
-                    .attr('height', 200);
+                    .attr('height', 200)
+                    .style('text-align', d.x >= topicX ? 'left' : 'right');
 
                 title.append('xhtml:div')
                     .attr('class', 'nodeLecturer')
@@ -255,10 +255,12 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
 
                 title.append('xhtml:div')
                     .attr('class', 'nodeTitle')
-                    .html(d.id);
+                    .html(d.Title);
 
-                node.filter(q => q.id != d.id)
-                    .style('opacity', 0.25);
+                node.filter(function(q) {
+                    return !(q.id == d.id ||
+                        (q.nodeType == DataView.TOPIC && q.id == d.Topic));
+                }).style('opacity', 0.25);
             }
         })
         .on('mouseout', (d, i) => {
@@ -273,7 +275,7 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
         .attr('fill', d => d.color)
         .on("mouseover", function(d) {
             select(this)
-                .attr('fill', MIDDLE_COLOR);
+                .attr('fill', DARK_COLOR);
         })
         .on("mouseout", function(d) {
             select(this)
@@ -298,16 +300,16 @@ DataView.showResearchAxisView = function(researchAxis, videoClicked, topicClicke
 
     node.on('click', d => {
         if (d.nodeType == DataView.RESEARCH_AXIS) {
-            researchAxisClicked();
+            back();
         } else if (d.nodeType == DataView.TOPIC) {
-            topicClicked(d.id, videoClicked, researchAxisClicked);
+            topicClicked(d, videoClicked, back);
         } else {
-            videoClicked(d.YouTube)
+            videoClicked(d)
         }
     });
 }
 
-DataView.showTopicView = function(selectedNode, videoClicked, keywordNodeClicked) {
+DataView.showTopicView = function(selectedNode, videoClicked, back) {
     let list = document.getElementsByClassName('graph');
     while (list[0]) {
         list[0].parentNode.removeChild(list[0]);
@@ -319,39 +321,36 @@ DataView.showTopicView = function(selectedNode, videoClicked, keywordNodeClicked
     }
 
     let nodes = {};
-    let links = [];
+    let links = {};
 
     data.forEach(function(d) {
         if (d.Topic == selectedNode) {
             nodes[d.Topic] = {
                 id: d.Topic,
                 value: 50,
-                color: MIDDLE_COLOR,
-                nodeType: DataView.TOPIC
-            };
-            nodes[d.Title] = {
-                id: d.Title,
-                value: 20,
-                Lecturer: d.Lecturer,
-                YouTube: d.YouTube,
-                Summary: d.Summary,
-                Affiliation: d.Affiliation,
-                Date: d.Date,
-                Type: d.Type,
+                nodeType: DataView.TOPIC,
                 color: MIDDLE_COLOR2,
-                nodeType: DataView.VIDEO
             };
+            nodes[d.YouTube] = {
+                id: d.YouTube,
+                value: 20,
+                nodeType: DataView.VIDEO,
+                color: MIDDLE_COLOR3
+            };
+            Object.assign(nodes[d.YouTube], d);
             let l = {};
             l.source = d.Topic;
-            l.target = d.Title;
-            links.push(l);
+            l.target = d.YouTube;
+            links[`${d.Topic}->${d.YouTube}`] = l;
         }
     });
 
-    nodes = Object.values(nodes);
 
-    let simulation = forceSimulation(nodes)
-        .force('link', forceLink(links).id(d => d.id).distance(200))
+    let nodes_list = Object.values(nodes);
+    let links_list = Object.values(links);
+
+    let simulation = forceSimulation(nodes_list)
+        .force('link', forceLink(links_list).id(d => d.id).distance(200))
         .force('charge', forceManyBody().strength(-2000))
         .force('center', forceCenter(WIDTH * 0.4, HEIGHT / 2))
         .force('collide', forceCollide(60).strength(2.0));
@@ -360,17 +359,16 @@ DataView.showTopicView = function(selectedNode, videoClicked, keywordNodeClicked
         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
         .attr('class', 'graph');
 
-
     let link = svg.append('g')
         .attr('stroke', DARK_COLOR)
         .selectAll('line')
-        .data(links)
+        .data(links_list)
         .join('line')
         .attr('stroke-width', 1.5);
 
     let node = svg.append('g')
         .selectAll('g')
-        .data(nodes)
+        .data(nodes_list)
         .join('g')
         .attr('class', 'node')
         .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
@@ -407,20 +405,14 @@ DataView.showTopicView = function(selectedNode, videoClicked, keywordNodeClicked
         .attr('height', 100);
 
     title.append('xhtml:div')
+        .filter(d => d.nodeType == DataView.VIDEO)
         .attr('class', 'nodeLecturer')
-        .html(d => {
-            if (d.Lecturer) {
-                return d.Lecturer;
-            }
-        });
+        .html(d => d.Lecturer);
 
     title.append('xhtml:div')
+        .filter(d => d.nodeType == DataView.VIDEO)
         .attr('class', 'nodeTitle')
-        .html(d => {
-            if (d.Lecturer) {
-                return d.id;
-            }
-        });
+        .html(d => d.Title);
 
     simulation.on('tick', () => {
         link
@@ -434,9 +426,9 @@ DataView.showTopicView = function(selectedNode, videoClicked, keywordNodeClicked
 
     node.on('click', d => {
         if (d.nodeType == DataView.VIDEO) {
-            videoClicked(d.YouTube);
+            videoClicked(d);
         } else {
-            keywordNodeClicked();
+            back();
         }
     })
 }

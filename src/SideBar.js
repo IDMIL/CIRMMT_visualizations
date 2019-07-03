@@ -1,7 +1,9 @@
 import './SideBar.css';
-import data from './data.csv';
+import rawData from './data.csv';
 import Fuse from 'fuse.js';
 import logo from './logo.png';
+
+const data = rawData.filter(d => d.Title);
 
 let SideBar = {};
 
@@ -117,7 +119,7 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
                 var fuse = new Fuse(data, options);
                 updateVideoList(fuse.search(searchBar.value), onListItemClicked, true);
             } else {
-                updateVideoList(data.filter(d => d.Title).slice(-NUM_LATEST_VIDEOS), onListItemClicked, false);
+                updateVideoList(data.slice(-NUM_LATEST_VIDEOS), onListItemClicked, false);
             }
         }, 400);
     }
@@ -129,7 +131,7 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
     videoList.id = 'videoList';
     sideBarFrontContainer.appendChild(videoList);
 
-    updateVideoList(data.filter(d => d.Title).slice(-NUM_LATEST_VIDEOS), onListItemClicked, false);
+    updateVideoList(data.slice(-NUM_LATEST_VIDEOS), onListItemClicked, false);
 }
 
 SideBar.showDefaultMode = function() {
@@ -153,7 +155,7 @@ SideBar.showVideo = function(url) {
         if (d.YouTube == url) {
             node = d;
         }
-    })
+    });
 
     let elem = document.getElementById('playerContainer');
     if (elem) {
