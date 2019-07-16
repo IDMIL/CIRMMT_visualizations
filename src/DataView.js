@@ -329,13 +329,13 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
                 id: d.Topic,
                 value: 50,
                 nodeType: DataView.TOPIC,
-                color: MIDDLE_COLOR2,
+                color: MIDDLE_COLOR,
             };
             nodes[d.YouTube] = {
                 id: d.YouTube,
                 value: 20,
                 nodeType: DataView.VIDEO,
-                color: MIDDLE_COLOR3
+                color: MIDDLE_COLOR2
             };
             Object.assign(nodes[d.YouTube], d);
             let l = {};

@@ -69,10 +69,12 @@ function update() {
         SideBar.showDefaultMode();
         DataView.showDefaultView(nodeClicked);
         document.getElementById('container').style.width = '65%';
+        document.title = 'CIRMMT Distinguished Speaker Series Visualizations';
     } else if (state.mode == ViewMode.TOPIC) {
         SideBar.showDefaultMode();
         DataView.showTopicView(state.node, videoClicked, backButtonClicked);
         document.getElementById('container').style.width = '65%';
+        document.title = 'CIRMMT Distinguished Speaker Series Visualizations';
     } else if (state.mode == ViewMode.RESEARCH_AXIS) {
         DataView.showResearchAxisView(
             state.node,
