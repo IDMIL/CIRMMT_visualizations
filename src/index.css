@@ -45,6 +45,10 @@ body {
     transition: opacity 0.25s;
 }
 
+.nodeNonClickable {
+    transition: opacity 0.25s;
+}
+
 .nodeTextBox {
     text-align: center;
     padding-left: 8pt;

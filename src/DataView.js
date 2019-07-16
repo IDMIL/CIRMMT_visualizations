@@ -85,7 +85,7 @@ DataView.showDefaultView = function(clicked) {
         .selectAll('g')
         .data(nodes_list)
         .join('g')
-        .attr('class', 'node')
+        .attr('class', d => d.nodeType == DataView.TOPIC ? 'node' : 'nodeNonClickable')
         .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
         .on("mouseover", function(d) {
             let createLink = function(l) {
@@ -150,164 +150,164 @@ DataView.showDefaultView = function(clicked) {
             .attr('transform', d => 'translate(' + Math.max(d.value, Math.min(WIDTH - d.value, d.x)) + ',' + Math.max(d.value, Math.min(HEIGHT - d.value, d.y)) + ')');
     });
 
-    node.on('click', d => {
+    node.filter(d => d.nodeType == DataView.TOPIC).on('click', d => {
         clicked(d);
     });
 
     defaultViewCreated = true;
 };
 
-DataView.showResearchAxisView = function(selectedNode, videoClicked, topicClicked, back) {
-    let list = document.getElementsByClassName('graph');
-    while (list[0]) {
-        list[0].parentNode.removeChild(list[0]);
-    }
+// DataView.showResearchAxisView = function(selectedNode, videoClicked, topicClicked, back) {
+//     let list = document.getElementsByClassName('graph');
+//     while (list[0]) {
+//         list[0].parentNode.removeChild(list[0]);
+//     }
 
-    if (defaultViewCreated) {
-        let topicView = document.getElementById('topicView');
-        topicView.style.display = 'none';
-    }
+//     if (defaultViewCreated) {
+//         let topicView = document.getElementById('topicView');
+//         topicView.style.display = 'none';
+//     }
 
-    let nodes = {};
-    let links = {};
+//     let nodes = {};
+//     let links = {};
 
-    data.forEach(function(d) {
-        if (d.ResearchAxis == selectedNode) {
-            nodes[d.ResearchAxis] = {
-                id: d.ResearchAxis,
-                nodeType: DataView.RESEARCH_AXIS,
-                value: MAX_SIZE,
-                color: MIDDLE_COLOR
-            };
-            if (nodes[d.Topic] != undefined) {
-                nodes[d.Topic].value += 2;
-            } else {
-                nodes[d.Topic] = {
-                    id: d.Topic,
-                    nodeType: DataView.TOPIC,
-                    value: MIN_SIZE,
-                    color: MIDDLE_COLOR2,
-                };
-            }
-            nodes[d.Title] = {
-                id: d.YouTube,
-                value: 30,
-                nodeType: DataView.VIDEO,
-                color: MIDDLE_COLOR3
-            };
-            Object.assign(nodes[d.Title], d);
-            let l = {};
-            l.source = d.ResearchAxis;
-            l.target = d.Topic;
-            links[`${d.ResearchAxis}->${d.Topic}`] = l;
-            l = {};
-            l.source = d.Topic;
-            l.target = d.YouTube;
-            links[`${d.YouTube}->${d.Topic}`] = l;
-        }
-    });
+//     data.forEach(function(d) {
+//         if (d.ResearchAxis == selectedNode) {
+//             nodes[d.ResearchAxis] = {
+//                 id: d.ResearchAxis,
+//                 nodeType: DataView.RESEARCH_AXIS,
+//                 value: MAX_SIZE,
+//                 color: MIDDLE_COLOR
+//             };
+//             if (nodes[d.Topic] != undefined) {
+//                 nodes[d.Topic].value += 2;
+//             } else {
+//                 nodes[d.Topic] = {
+//                     id: d.Topic,
+//                     nodeType: DataView.TOPIC,
+//                     value: MIN_SIZE,
+//                     color: MIDDLE_COLOR2,
+//                 };
+//             }
+//             nodes[d.Title] = {
+//                 id: d.YouTube,
+//                 value: 30,
+//                 nodeType: DataView.VIDEO,
+//                 color: MIDDLE_COLOR3
+//             };
+//             Object.assign(nodes[d.Title], d);
+//             let l = {};
+//             l.source = d.ResearchAxis;
+//             l.target = d.Topic;
+//             links[`${d.ResearchAxis}->${d.Topic}`] = l;
+//             l = {};
+//             l.source = d.Topic;
+//             l.target = d.YouTube;
+//             links[`${d.YouTube}->${d.Topic}`] = l;
+//         }
+//     });
 
-    nodes = Object.values(nodes);
-    links = Object.values(links);
+//     nodes = Object.values(nodes);
+//     links = Object.values(links);
 
-    let simulation = forceSimulation(nodes)
-        .force('link', forceLink(links).id(d => d.id))
-        .force('charge', forceManyBody().strength(d => -d.value * 3))
-        .force('center', forceCenter(WIDTH / 2, HEIGHT / 2))
-        .force('collide', forceCollide().strength(0.95).radius(d => d.value * 1.05));
+//     let simulation = forceSimulation(nodes)
+//         .force('link', forceLink(links).id(d => d.id))
+//         .force('charge', forceManyBody().strength(d => -d.value * 3))
+//         .force('center', forceCenter(WIDTH / 2, HEIGHT / 2))
+//         .force('collide', forceCollide().strength(0.95).radius(d => d.value * 1.05));
 
-    let svg = select('#container').append('svg')
-        .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
-        .attr('class', 'graph');
+//     let svg = select('#container').append('svg')
+//         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
+//         .attr('class', 'graph');
 
-    let node = svg.append('g')
-        .selectAll('g')
-        .data(nodes)
-        .join('g')
-        .attr('class', 'node')
-        .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
-        .on('mouseover', function(d) {
-            if (d.nodeType == DataView.VIDEO) {
-                node.sort(function(a, b) { // select the parent and sort the path's
-                    if (a.id != d.id) return -1; // a is not the hovered element, send "a" to the back
-                    else return 1;
-                });
+//     let node = svg.append('g')
+//         .selectAll('g')
+//         .data(nodes)
+//         .join('g')
+//         .attr('class', 'node')
+//         .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
+//         .on('mouseover', function(d) {
+//             if (d.nodeType == DataView.VIDEO) {
+//                 node.sort(function(a, b) { // select the parent and sort the path's
+//                     if (a.id != d.id) return -1; // a is not the hovered element, send "a" to the back
+//                     else return 1;
+//                 });
 
-                let topicX;
-                nodes.forEach((q) => {
-                    if (q.nodeType == DataView.TOPIC && q.id == d.Topic) {
-                        topicX = q.x;
-                    }
-                });
+//                 let topicX;
+//                 nodes.forEach((q) => {
+//                     if (q.nodeType == DataView.TOPIC && q.id == d.Topic) {
+//                         topicX = q.x;
+//                     }
+//                 });
 
-                let title = select(this).append('foreignObject')
-                    .attr('id', 'nodeTitle')
-                    .attr('class', 'nodeTitleBox_')
-                    .attr('x', d.x >= topicX ? d.value + 8 : -d.value - 8 - 150)
-                    .attr('y', -d.value)
-                    .attr('width', 150)
-                    .attr('height', 200)
-                    .style('text-align', d.x >= topicX ? 'left' : 'right');
+//                 let title = select(this).append('foreignObject')
+//                     .attr('id', 'nodeTitle')
+//                     .attr('class', 'nodeTitleBox_')
+//                     .attr('x', d.x >= topicX ? d.value + 8 : -d.value - 8 - 150)
+//                     .attr('y', -d.value)
+//                     .attr('width', 150)
+//                     .attr('height', 200)
+//                     .style('text-align', d.x >= topicX ? 'left' : 'right');
 
-                title.append('xhtml:div')
-                    .attr('class', 'nodeLecturer')
-                    .html(d.Lecturer);
+//                 title.append('xhtml:div')
+//                     .attr('class', 'nodeLecturer')
+//                     .html(d.Lecturer);
 
-                title.append('xhtml:div')
-                    .attr('class', 'nodeTitle')
-                    .html(d.Title);
+//                 title.append('xhtml:div')
+//                     .attr('class', 'nodeTitle')
+//                     .html(d.Title);
 
-                node.filter(function(q) {
-                    return !(q.id == d.id ||
-                        (q.nodeType == DataView.TOPIC && q.id == d.Topic));
-                }).style('opacity', 0.25);
-            }
-        })
-        .on('mouseout', (d, i) => {
-            if (d.nodeType == DataView.VIDEO) {
-                node.style('opacity', 1.0);
-                select('#nodeTitle').remove();
-            }
-        })
+//                 node.filter(function(q) {
+//                     return !(q.id == d.id ||
+//                         (q.nodeType == DataView.TOPIC && q.id == d.Topic));
+//                 }).style('opacity', 0.25);
+//             }
+//         })
+//         .on('mouseout', (d, i) => {
+//             if (d.nodeType == DataView.VIDEO) {
+//                 node.style('opacity', 1.0);
+//                 select('#nodeTitle').remove();
+//             }
+//         })
 
-    node.append('circle')
-        .attr('r', d => d.value)
-        .attr('fill', d => d.color)
-        .on("mouseover", function(d) {
-            select(this)
-                .attr('fill', DARK_COLOR);
-        })
-        .on("mouseout", function(d) {
-            select(this)
-                .attr('fill', d.color);
-        });
+//     node.append('circle')
+//         .attr('r', d => d.value)
+//         .attr('fill', d => d.color)
+//         .on("mouseover", function(d) {
+//             select(this)
+//                 .attr('fill', DARK_COLOR);
+//         })
+//         .on("mouseout", function(d) {
+//             select(this)
+//                 .attr('fill', d.color);
+//         });
 
-    node.append('foreignObject')
-        .filter(d => d.nodeType != DataView.VIDEO)
-        .attr('class', 'nodeTextBox')
-        .attr('x', d => -d.value)
-        .attr('y', d => -d.value)
-        .attr('width', d => d.value * 2)
-        .attr('height', d => d.value * 2)
-        .append('xhtml:body')
-        .attr('class', 'nodeTextBoxBody')
-        .html(d => d.id);
+//     node.append('foreignObject')
+//         .filter(d => d.nodeType != DataView.VIDEO)
+//         .attr('class', 'nodeTextBox')
+//         .attr('x', d => -d.value)
+//         .attr('y', d => -d.value)
+//         .attr('width', d => d.value * 2)
+//         .attr('height', d => d.value * 2)
+//         .append('xhtml:body')
+//         .attr('class', 'nodeTextBoxBody')
+//         .html(d => d.id);
 
-    simulation.on('tick', () => {
-        node
-            .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
-    });
+//     simulation.on('tick', () => {
+//         node
+//             .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
+//     });
 
-    node.on('click', d => {
-        if (d.nodeType == DataView.RESEARCH_AXIS) {
-            back();
-        } else if (d.nodeType == DataView.TOPIC) {
-            topicClicked(d, videoClicked, back);
-        } else {
-            videoClicked(d)
-        }
-    });
-}
+//     node.on('click', d => {
+//         if (d.nodeType == DataView.RESEARCH_AXIS) {
+//             back();
+//         } else if (d.nodeType == DataView.TOPIC) {
+//             topicClicked(d, videoClicked, back);
+//         } else {
+//             videoClicked(d)
+//         }
+//     });
+// }
 
 DataView.showTopicView = function(selectedNode, videoClicked, back) {
     let list = document.getElementsByClassName('graph');

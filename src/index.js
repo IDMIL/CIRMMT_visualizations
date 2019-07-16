@@ -30,7 +30,7 @@ function createURLFromState() {
 function videoClicked(selectedNode) {
     state.mode = ViewMode.VIDEO;
     state.node = selectedNode.id;
-    window.history.replaceState(state, null, createURLFromState());
+    window.history.pushState(state, null, createURLFromState());
     // document.title = 
     // console.log(node);
     update();
@@ -38,7 +38,7 @@ function videoClicked(selectedNode) {
 
 function backButtonClicked() {
     state.mode = ViewMode.DEFAULT;
-    window.history.replaceState(state, null, window.location.pathname);
+    window.history.pushState(state, null, window.location.pathname);
     update();
 }
 
@@ -46,11 +46,11 @@ function nodeClicked(selectedNode) {
     if (selectedNode.nodeType == DataView.RESEARCH_AXIS) {
         state.mode = ViewMode.RESEARCH_AXIS;
         state.node = selectedNode.id;
-        window.history.replaceState(state, null, createURLFromState());
+        window.history.pushState(state, null, createURLFromState());
     } else {
         state.mode = ViewMode.TOPIC;
         state.node = selectedNode.id;
-        window.history.replaceState(state, null, createURLFromState());
+        window.history.pushState(state, null, createURLFromState());
     }
     update();
 }
@@ -60,7 +60,7 @@ function onSearch(results) {}
 function onListItemClicked(url) {
     state.mode = ViewMode.VIDEO;
     state.node = url;
-    window.history.replaceState(state, null, createURLFromState());
+    window.history.pushState(state, null, createURLFromState());
     update();
 }
 
