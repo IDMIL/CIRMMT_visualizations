@@ -157,6 +157,8 @@ SideBar.showVideo = function(url) {
         }
     });
 
+    document.title = node.Lecturer + ': ' + node.Title;
+
     let elem = document.getElementById('playerContainer');
     if (elem) {
         elem.parentNode.removeChild(elem);
