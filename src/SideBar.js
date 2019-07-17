@@ -81,7 +81,7 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
 
     searchBar = document.createElement('input');
     searchBar.type = 'text';
-    searchBar.placeholder = 'Search';
+    searchBar.placeholder = 'Search for lecturers, topics, affiliation, country, etc.';
     searchBar.classList.add('searchBar');
     searchBarContainer.appendChild(searchBar);
 
