@@ -1,12 +1,13 @@
 :root {
-    --sideMargin: 3vw;
+    font-size: 10pt;
     --darkColor: #b6b9a7;
     --middleColor: #c3d0c3;
     --middleColor2: #e1e8ce;
     --middleColor3: #f7f9ef;
     --lightColor: #FAFFFB;
     --textMain: #000;
-    --textAlt: #333;
+    --textAlt: #444;
+    --sideMargin: 1.8rem;
 }
 
 html,
@@ -19,6 +20,50 @@ body {
 * {
     box-sizing: border-box;
     color: var(--textMain);
+}
+
+#siteTitle {
+    font-weight: normal;
+    height: 2rem;
+    position: absolute;
+    left: var(--sideMargin);
+    top: var(--sideMargin);
+    display: flex;
+    align-items: center;
+}
+
+#siteTitleText {
+    font-weight: normal;
+    color: var(--textAlt);
+    font-size: 1.2rem;
+    margin: 0;
+    margin-left: 1em;
+}
+
+#siteLogo {
+    height: 100%;
+}
+
+#siteAbout {
+    font-size: 1.2rem;
+    color: var(--textAlt);
+    margin-left: 1em;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#aboutContainer {
+    display: flex;
+    width: 65%;
+    height: 100%;
+    align-items: center;
+}
+
+#aboutContent {
+    color: var(--textAlt);
+    font-size: 1.2rem;
+    margin: auto;
+    text-align: center;
 }
 
 #container {
@@ -46,16 +91,17 @@ body {
 }
 
 .nodeNonClickable {
+    user-select: none;
     transition: opacity 0.25s;
 }
 
 .nodeTextBox {
     text-align: center;
-    padding-left: 8pt;
-    padding-right: 8pt;
+    padding-left: 0.8em;
+    padding-right: 0.8em;
     user-select: none;
     pointer-events: none;
-    font-size: 10pt;
+    font-size: 1rem;
 }
 
 .nodeTextBoxBody {
@@ -78,11 +124,18 @@ body {
 
 .nodeLecturer {
     letter-spacing: 0.05em;
-    font-size: 10pt;
+    font-size: 1rem;
     text-transform: uppercase;
 }
 
+.nodeDate {
+    letter-spacing: 0.05em;
+    margin-top: 0.25em;
+    font-size: 0.7rem;
+    color: var(--textAlt);
+}
+
 .nodeTitle {
-    font-size: 8pt;
-    margin-top: 0.5em;
+    font-size: 0.7rem;
+    margin-top: 0.25em;
 }

@@ -13,11 +13,11 @@
 }
 
 #sideBarFrontContainer>div {
-    margin-bottom: 1vw;
+    margin-bottom: 1rem;
 }
 
 #sideBarFrontLabel {
-    font-size: 1.2vw;
+    font-size: 1.2rem;
 }
 
 .searchBarContainer {
@@ -30,18 +30,24 @@
     border: none;
     outline: none;
     box-shadow: none;
-    font-size: 1.2vw;
+    font-size: 1.2rem;
     background: #f8f8f8;
 }
 
 /* VIDEO LIST */
 
 #videoList>div {
-    margin-bottom: 1vw;
+    margin-bottom: 1rem;
+    user-select: none;
 }
 
 .videoListItem {
     display: flex;
+    cursor: pointer;
+}
+
+.videoListItem * {
+    cursor: pointer;
 }
 
 .videoListItemDescription {
@@ -50,12 +56,12 @@
 }
 
 .videoListItemTitle {
-    font-size: 1vw;
+    font-size: 1rem;
 }
 
 .videoListItemLecturer {
     text-transform: uppercase;
-    font-size: 1vw;
+    font-size: 1rem;
     margin-bottom: 0.5em;
 }
 
@@ -78,27 +84,29 @@
 }
 
 #playerLecturer {
-    font-size: 3vh;
+    font-size: 1.8rem;
+    height: 2rem;
+    line-height: 2rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
 #playerAffiliation {
-    font-size: 1.75vh;
+    font-size: 1rem;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
     color: var(--textAlt);
 }
 
 #playerDate {
-    font-size: 1.75vh;
+    font-size: 1rem;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
     color: var(--textAlt);
 }
 
 #playerTitle {
-    font-size: 2.75vh;
+    font-size: 1.2rem;
     margin-top: 1vh;
 }
 
@@ -112,8 +120,8 @@
     display: block;
     width: 100%;
     height: 35vh;
-    padding-left: 0.5vw;
-    padding-right: 0.5vw;
-    margin-top: 3vh;
-    margin-bottom: 3vh;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }

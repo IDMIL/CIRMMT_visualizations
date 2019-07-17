@@ -1,14 +1,12 @@
 import { select, selectAll } from 'd3-selection';
 import { forceSimulation, forceLink, forceCenter, forceManyBody, forceCollide } from 'd3-force';
 
-import rawData from './data.csv';
-
-const data = rawData.filter(d => d.Title);
+import data from './Globals';
 
 const WIDTH = 700;
 const HEIGHT = 700;
 
-const MIN_SIZE = 38;
+const MIN_SIZE = 40;
 const MAX_SIZE = 55;
 
 let DataView = {};
@@ -24,6 +22,14 @@ let MIDDLE_COLOR3 = 'var(--middleColor3)';
 let LIGHT_COLOR = 'var(--light_color)';
 
 var defaultViewCreated = false;
+
+DataView.show = function() {
+    document.getElementById('container').style.display = 'block';
+}
+
+DataView.hide = function() {
+    document.getElementById('container').style.display = 'none';
+}
 
 DataView.showDefaultView = function(clicked) {
     let list = document.getElementsByClassName('graph');
@@ -87,7 +93,7 @@ DataView.showDefaultView = function(clicked) {
         .join('g')
         .attr('class', d => d.nodeType == DataView.TOPIC ? 'node' : 'nodeNonClickable')
         .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
-        .on("mouseover", function(d) {
+        .on('mouseover', function(d) {
             let createLink = function(l) {
                 link.append('line')
                     .data([l])
@@ -113,7 +119,7 @@ DataView.showDefaultView = function(clicked) {
                 });
             }
         })
-        .on("mouseout", function(d) {
+        .on('mouseout', function(d) {
             selectAll('.link')
                 .remove();
         });
@@ -121,11 +127,11 @@ DataView.showDefaultView = function(clicked) {
     node.append('circle')
         .attr('r', d => d.value)
         .attr('fill', d => d.color)
-        .on("mouseover", function(d) {
+        .on('mouseover', function(d) {
             select(this)
                 .attr('fill', DARK_COLOR);
         })
-        .on("mouseout", function(d) {
+        .on('mouseout', function(d) {
             select(this)
                 .attr('fill', d.color);
         });
@@ -150,7 +156,7 @@ DataView.showDefaultView = function(clicked) {
             .attr('transform', d => 'translate(' + Math.max(d.value, Math.min(WIDTH - d.value, d.x)) + ',' + Math.max(d.value, Math.min(HEIGHT - d.value, d.y)) + ')');
     });
 
-    node.filter(d => d.nodeType == DataView.TOPIC).on('click', d => {
+    node.on('click', d => {
         clicked(d);
     });
 
@@ -229,7 +235,7 @@ DataView.showDefaultView = function(clicked) {
 //         .on('mouseover', function(d) {
 //             if (d.nodeType == DataView.VIDEO) {
 //                 node.sort(function(a, b) { // select the parent and sort the path's
-//                     if (a.id != d.id) return -1; // a is not the hovered element, send "a" to the back
+//                     if (a.id != d.id) return -1; // a is not the hovered element, send 'a' to the back
 //                     else return 1;
 //                 });
 
@@ -273,11 +279,11 @@ DataView.showDefaultView = function(clicked) {
 //     node.append('circle')
 //         .attr('r', d => d.value)
 //         .attr('fill', d => d.color)
-//         .on("mouseover", function(d) {
+//         .on('mouseover', function(d) {
 //             select(this)
 //                 .attr('fill', DARK_COLOR);
 //         })
-//         .on("mouseout", function(d) {
+//         .on('mouseout', function(d) {
 //             select(this)
 //                 .attr('fill', d.color);
 //         });
@@ -350,7 +356,7 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
     let links_list = Object.values(links);
 
     let simulation = forceSimulation(nodes_list)
-        .force('link', forceLink(links_list).id(d => d.id).distance(200))
+        .force('link', forceLink(links_list).id(d => d.id).distance(225))
         .force('charge', forceManyBody().strength(-2000))
         .force('center', forceCenter(WIDTH * 0.4, HEIGHT / 2))
         .force('collide', forceCollide(60).strength(2.0));
@@ -360,7 +366,7 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
         .attr('class', 'graph');
 
     let link = svg.append('g')
-        .attr('stroke', DARK_COLOR)
+        .attr('stroke', MIDDLE_COLOR2)
         .selectAll('line')
         .data(links_list)
         .join('line')
@@ -376,11 +382,11 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
     node.append('circle')
         .attr('r', d => d.value)
         .attr('fill', d => d.color)
-        .on("mouseover", function(d) {
+        .on('mouseover', function(d) {
             select(this)
                 .attr('fill', DARK_COLOR);
         })
-        .on("mouseout", function(d) {
+        .on('mouseout', function(d) {
             select(this)
                 .attr('fill', d.color);
         });
@@ -396,6 +402,8 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
         .attr('class', 'nodeTextBoxBody')
         .html(d => d.id);
 
+    var request = new XMLHttpRequest();
+
     let title = node.append('foreignObject')
         .filter(d => d.nodeType == DataView.VIDEO)
         .attr('class', 'nodeTitleBox')
@@ -405,12 +413,18 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
         .attr('height', 100);
 
     title.append('xhtml:div')
-        .filter(d => d.nodeType == DataView.VIDEO)
         .attr('class', 'nodeLecturer')
         .html(d => d.Lecturer);
 
     title.append('xhtml:div')
-        .filter(d => d.nodeType == DataView.VIDEO)
+        .attr('class', 'nodeDate')
+        .html(d => {
+            let dateObj = new Date(d.Date);
+            let dateStr = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' });
+            return `${dateStr}, ${d.viewCount} views`;
+        });
+
+    title.append('xhtml:div')
         .attr('class', 'nodeTitle')
         .html(d => d.Title);
 

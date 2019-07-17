@@ -1,9 +1,6 @@
 import './SideBar.css';
-import rawData from './data.csv';
+import data from './Globals';
 import Fuse from 'fuse.js';
-import logo from './logo.png';
-
-const data = rawData.filter(d => d.Title);
 
 let SideBar = {};
 
@@ -113,7 +110,8 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
                         'Topic',
                         'Keywords',
                         'Summary',
-                        'Affiliation'
+                        'Affiliation',
+                        'Country'
                     ]
                 };
                 var fuse = new Fuse(data, options);
@@ -132,6 +130,10 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
     sideBarFrontContainer.appendChild(videoList);
 
     updateVideoList(data.slice(-NUM_LATEST_VIDEOS), onListItemClicked, false);
+}
+
+SideBar.focus = function() {
+    searchBar.focus();
 }
 
 SideBar.showDefaultMode = function() {
@@ -174,7 +176,7 @@ SideBar.showVideo = function(url) {
 
     let playerAffiliation = document.createElement('div');
     playerAffiliation.id = 'playerAffiliation';
-    playerAffiliation.innerHTML = node.Affiliation;
+    playerAffiliation.innerHTML = `${node.Affiliation}, ${node.Country}`;
     playerContainer.appendChild(playerAffiliation);
 
     let playerTitle = document.createElement('div');
