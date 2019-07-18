@@ -5,19 +5,23 @@ import data from './Globals';
 import DataView from './DataView';
 import SideBar from './SideBar';
 import QueryString from 'query-string';
+import _ from 'lodash';
 
 let ViewMode = {
     DEFAULT: 'default',
     TOPIC: 'topic',
     RESEARCH_AXIS: 'researchAxis',
-    VIDEO: 'video',
-    ABOUT: 'about'
+    VIDEO: 'video'
 }
 
 let state = {
     mode: ViewMode.DEFAULT,
     node: null,
 };
+
+let lastState = null;
+let lastVideo = null;
+let aboutMode = false;
 
 let siteTitle = document.createElement('div');
 siteTitle.id = 'siteTitle';
@@ -40,8 +44,8 @@ siteTitle.appendChild(siteAbout);
 
 let aboutContainer = document.createElement('div');
 aboutContainer.id = 'aboutContainer';
-aboutContainer.style.display = 'none';
-document.body.appendChild(aboutContainer);
+aboutContainer.style.opacity = 0;
+document.getElementById('container').appendChild(aboutContainer);
 
 let aboutContent = document.createElement('div');
 aboutContent.id = 'aboutContent';
@@ -49,23 +53,22 @@ aboutContent.innerHTML = 'Developed at Input Devices and Music Interaction Labor
 aboutContainer.appendChild(aboutContent);
 
 function showAbout() {
-    aboutContainer.style.display = 'flex';
+    aboutContainer.style.opacity = 0.9;
+    aboutContainer.style.visibility = 'visible';
 }
 
 function hideAbout() {
-    aboutContainer.style.display = 'none';
+    aboutContainer.style.opacity = 0.0;
+    aboutContainer.style.visibility = 'hidden';
 }
 
 siteAbout.onclick = function() {
-    if (state.mode != ViewMode.ABOUT) {
-        state.mode = ViewMode.ABOUT;
-        state.node = null;
-        window.history.pushState(state, null, createURLFromState());
+    aboutMode = !aboutMode;
+    if (aboutMode) {
+        showAbout();
     } else {
-        state.mode = ViewMode.DEFAULT;
-        window.history.pushState(state, null, window.location.pathname);
+        hideAbout();
     }
-    update();
 }
 
 function createURLFromState() {
@@ -109,40 +112,34 @@ function onListItemClicked(url) {
 }
 
 function update() {
-    if (state.mode == ViewMode.DEFAULT) {
-        hideAbout();
-        DataView.show();
-        SideBar.showDefaultMode();
-        DataView.showDefaultView(nodeClicked);
-        document.getElementById('container').style.width = '65%';
-        document.title = 'CIRMMT Distinguished Speaker Series Visualization';
-    } else if (state.mode == ViewMode.TOPIC) {
-        hideAbout();
-        DataView.show();
-        SideBar.showDefaultMode();
-        DataView.showTopicView(state.node, videoClicked, backButtonClicked);
-        document.getElementById('container').style.width = '65%';
-        document.title = state.node;
-        // } else if (state.mode == ViewMode.RESEARCH_AXIS) {
-        //     DataView.show();
-        //     hideAbout();
-        //     DataView.showResearchAxisView(
-        //         state.node,
-        //         videoClicked,
-        //         nodeClicked,
-        //         backButtonClicked);
-    } else if (state.mode == ViewMode.VIDEO) {
-        hideAbout();
-        DataView.show();
-        SideBar.showVideo(state.node);
-        document.getElementById('container').style.width = '55%';
-    } else if (state.mode == ViewMode.ABOUT) {
-        SideBar.showDefaultMode();
-        DataView.hide();
-        showAbout();
-        document.getElementById('container').style.width = '65%';
-        document.title = 'About';
+    if (!_.isEqual(state, lastState)) {
+        if (state.mode == ViewMode.DEFAULT) {
+            SideBar.showDefaultMode();
+            DataView.showDefaultView(nodeClicked);
+            document.getElementById('container').style.width = '65%';
+            document.title = 'CIRMMT Distinguished Speaker Series Visualization';
+        } else if (state.mode == ViewMode.TOPIC) {
+            SideBar.showDefaultMode();
+            DataView.showTopicView(state.node, videoClicked, backButtonClicked);
+            document.getElementById('container').style.width = '65%';
+            document.title = state.node;
+            // } else if (state.mode == ViewMode.RESEARCH_AXIS) {
+            //     DataView.show();
+            //     hideAbout();
+            //     DataView.showResearchAxisView(
+            //         state.node,
+            //         videoClicked,
+            //         nodeClicked,
+            //         backButtonClicked);
+        } else if (state.mode == ViewMode.VIDEO) {
+            if (lastVideo != state.node) {
+                SideBar.showVideo(state.node);
+            }
+            lastVideo = state.node;
+            document.getElementById('container').style.width = '55%';
+        }
     }
+    lastState = _.clone(state);
 }
 
 window.onpopstate = function(event) {
@@ -179,16 +176,27 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 window.gapi_onload = function() {
     gapi.client.setApiKey('AIzaSyC85M7HHPkTkhImeOapMjvEgFbkMeo570Y');
     gapi.client.load('youtube', 'v3', function() {
-        for (let i = 0; i < data.length; i++) {
+        let urls = data.map(d => d.YouTube);
+        let groups = _.chunk(urls, 50);
+        const num_requests = groups.length;
+        let r = 0;
+        groups.forEach(g => {
             gapi.client.youtube.videos.list({
                 'part': 'statistics',
-                'id': data[i].YouTube
+                'id': g.join(',')
             }).then(response => {
-                data[i].viewCount = response.result.items[0].statistics.viewCount;
-                if (i == data.length - 1) {
+                response.result.items.forEach(d => {
+                    let v = data.find(q => q.YouTube == d.id);
+                    if (v) {
+                        v.viewCount = d.statistics.viewCount;
+                    }
+                });
+                ++r;
+                if (r == num_requests) {
                     start();
                 }
-            }, function(err) { console.error('Execute error', err); });
-        }
+            }, err => { console.error('Execute error', err); });
+
+        });
     });
 }
