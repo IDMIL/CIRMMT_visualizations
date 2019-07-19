@@ -77,7 +77,7 @@ DataView.showDefaultView = function(clicked) {
     let simulation = forceSimulation(nodes_list)
         .force('link', forceLink(links_list).id(d => d.id))
         .force('charge', forceManyBody().strength(d => -d.value * 4))
-        .force('center', forceCenter(WIDTH / 2, HEIGHT * 0.55))
+        .force('center', forceCenter(WIDTH / 2, HEIGHT * 0.58))
         .force('collide', forceCollide().strength(0.95).radius(d => d.value * 1.08));
 
 
