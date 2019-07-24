@@ -1,5 +1,5 @@
 import './SideBar.css';
-import data from './Globals';
+import { data } from './Globals';
 import Fuse from 'fuse.js';
 
 let SideBar = {};
@@ -186,8 +186,9 @@ SideBar.showVideo = function(url) {
 
     let playerDate = document.createElement('div');
     let dateObj = new Date(node.Date);
+    let dateString = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     playerDate.id = 'playerDate';
-    playerDate.innerHTML = node.Type + ', ' + dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    playerDate.innerHTML = `${node.Type}, ${dateString}, ${node.viewCount} views`;
     playerContainer.appendChild(playerDate);
 
     let player = document.createElement('player');

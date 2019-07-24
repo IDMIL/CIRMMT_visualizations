@@ -1,7 +1,7 @@
 import { select, selectAll } from 'd3-selection';
 import { forceSimulation, forceLink, forceCenter, forceManyBody, forceCollide } from 'd3-force';
 
-import data from './Globals';
+import { data, topicsData, topicsDict } from './Globals';
 
 const WIDTH = 700;
 const HEIGHT = 700;
@@ -46,7 +46,7 @@ DataView.showDefaultView = function(clicked) {
     let nodes = {};
     let links = {};
 
-    data.forEach(function(d) {
+    topicsData.forEach(function(d) {
         nodes[d.ResearchAxis] = {
             id: d.ResearchAxis,
             value: MAX_SIZE,
@@ -54,17 +54,13 @@ DataView.showDefaultView = function(clicked) {
             nodeType: DataView.RESEARCH_AXIS,
             researchAxis: d.ResearchAxis
         };
-        if (nodes[d.Topic] != undefined) {
-            nodes[d.Topic].value += 3;
-        } else {
-            nodes[d.Topic] = {
-                id: d.Topic,
-                value: MIN_SIZE,
-                color: MIDDLE_COLOR2,
-                nodeType: DataView.TOPIC,
-                researchAxis: d.ResearchAxis
-            };
-        }
+        nodes[d.Topic] = {
+            id: d.Topic,
+            value: MIN_SIZE + topicsDict[d.Topic]['count'] * 3,
+            color: MIDDLE_COLOR2,
+            nodeType: DataView.TOPIC,
+            researchAxis: d.ResearchAxis
+        };
         let l = {};
         l.source = d.ResearchAxis;
         l.target = d.Topic;
@@ -77,7 +73,7 @@ DataView.showDefaultView = function(clicked) {
     let simulation = forceSimulation(nodes_list)
         .force('link', forceLink(links_list).id(d => d.id))
         .force('charge', forceManyBody().strength(d => -d.value * 4))
-        .force('center', forceCenter(WIDTH / 2, HEIGHT * 0.58))
+        .force('center', forceCenter(WIDTH * 0.5, HEIGHT * 0.55))
         .force('collide', forceCollide().strength(0.95).radius(d => d.value * 1.08));
 
 

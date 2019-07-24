@@ -1,7 +1,7 @@
 import './index.css';
 import logo from './logo.png';
 
-import data from './Globals';
+import { data } from './Globals';
 import DataView from './DataView';
 import SideBar from './SideBar';
 import QueryString from 'query-string';
