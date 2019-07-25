@@ -19,6 +19,7 @@ let state = {
     node: null,
 };
 
+let isLoaded = false;
 let lastState = null;
 let lastVideo = null;
 let aboutMode = false;
@@ -72,7 +73,7 @@ siteAbout.onclick = function() {
 }
 
 function createURLFromState() {
-    return `?mode=${state.mode}&node=${state.node}`;
+    return `?mode=${state.mode}&node=${state.node.replace('&', 'and')}`;
 }
 
 function videoClicked(selectedNode) {
@@ -149,6 +150,7 @@ window.onpopstate = function(event) {
 
 let queryState = QueryString.parse(location.search);
 if (queryState.mode && queryState.node) {
+    queryState.node = queryState.node.replace('and', '&');
     state = queryState;
     if (state.mode == ViewMode.VIDEO) {
         DataView.showDefaultView(nodeClicked);
@@ -194,9 +196,17 @@ window.gapi_onload = function() {
                 ++r;
                 if (r == num_requests) {
                     start();
+                    isLoaded = true;
                 }
-            }, err => { console.error('Execute error', err); });
-
+            }, err => {
+                console.error('Execute error', err);
+            });
         });
     });
 }
+
+// setTimeout(() => {
+            //     if (!isLoaded) {
+            //         start();
+            //     }
+            // }, 1000);

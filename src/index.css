@@ -138,13 +138,13 @@ body {
 }
 
 .nodeDate {
-    letter-spacing: 0.05em;
-    margin-top: 0.25em;
+    /*letter-spacing: 0.05em;*/
+    margin-top: 0.125rem;
     font-size: 0.7rem;
     color: var(--textAlt);
 }
 
 .nodeTitle {
-    font-size: 0.7rem;
-    margin-top: 0.25em;
+    font-size: 0.8rem;
+    margin-top: 0.125rem;
 }

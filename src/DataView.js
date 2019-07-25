@@ -335,7 +335,7 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
             };
             nodes[d.YouTube] = {
                 id: d.YouTube,
-                value: 20,
+                value: 15,
                 nodeType: DataView.VIDEO,
                 color: MIDDLE_COLOR2
             };
@@ -353,9 +353,8 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
 
     let simulation = forceSimulation(nodes_list)
         .force('link', forceLink(links_list).id(d => d.id).distance(225))
-        .force('charge', forceManyBody().strength(-2000))
-        .force('center', forceCenter(WIDTH * 0.4, HEIGHT / 2))
-        .force('collide', forceCollide(60).strength(2.0));
+        .force('charge', forceManyBody().strength(-2000).theta(0.05))
+        .force('center', forceCenter(WIDTH * 0.4, HEIGHT / 2));
 
     let svg = select('#container').append('svg')
         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
@@ -405,8 +404,8 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
         .attr('class', 'nodeTitleBox')
         .attr('x', d => d.value + 8)
         .attr('y', d => -d.value)
-        .attr('width', 150)
-        .attr('height', 100);
+        .attr('width', 115)
+        .attr('height', 120);
 
     title.append('xhtml:div')
         .attr('class', 'nodeLecturer')
@@ -416,8 +415,9 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
         .attr('class', 'nodeDate')
         .html(d => {
             let dateObj = new Date(d.Date);
+            let viewCountStr = d.viewCount ? `, ${d.viewCount} views` : '';
             let dateStr = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' });
-            return `${dateStr}, ${d.viewCount} views`;
+            return dateStr + viewCountStr;
         });
 
     title.append('xhtml:div')
