@@ -1,5 +1,6 @@
 import { select, selectAll } from 'd3-selection';
 import { forceSimulation, forceLink, forceCenter, forceManyBody, forceCollide } from 'd3-force';
+import forceBoundary from 'd3-force-boundary';
 
 import { data, topicsData, topicsDict } from './Globals';
 
@@ -74,8 +75,8 @@ DataView.showDefaultView = function(clicked) {
         .force('link', forceLink(links_list).id(d => d.id))
         .force('charge', forceManyBody().strength(d => -d.value * 4))
         .force('center', forceCenter(WIDTH * 0.5, HEIGHT * 0.55))
-        .force('collide', forceCollide().strength(0.95).radius(d => d.value * 1.08));
-
+        .force('collide', forceCollide().strength(0.95).radius(d => d.value * 1.08))
+        .force('boundary', forceBoundary(0, 0, WIDTH, HEIGHT).strength(0.2));
 
     let svg = select('#container').append('svg')
         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
@@ -149,7 +150,7 @@ DataView.showDefaultView = function(clicked) {
             .attr('x2', d => d.target.x)
             .attr('y2', d => d.target.y);
         node
-            .attr('transform', d => 'translate(' + Math.max(d.value, Math.min(WIDTH - d.value, d.x)) + ',' + Math.max(d.value, Math.min(HEIGHT - d.value, d.y)) + ')');
+            .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
     });
 
     node.on('click', d => {
@@ -354,7 +355,8 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
     let simulation = forceSimulation(nodes_list)
         .force('link', forceLink(links_list).id(d => d.id).distance(225))
         .force('charge', forceManyBody().strength(-2000).theta(0.05))
-        .force('center', forceCenter(WIDTH * 0.4, HEIGHT / 2));
+        .force('center', forceCenter(WIDTH / 2, HEIGHT / 2))
+        .force('boundary', forceBoundary(0, 0, WIDTH, HEIGHT).strength(0.2));
 
     let svg = select('#container').append('svg')
         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
