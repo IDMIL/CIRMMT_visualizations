@@ -117,7 +117,7 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
                 var fuse = new Fuse(data, options);
                 updateVideoList(fuse.search(searchBar.value), onListItemClicked, true);
             } else {
-                updateVideoList(data.slice(-NUM_LATEST_VIDEOS), onListItemClicked, false);
+                updateVideoList(data.slice(-NUM_LATEST_VIDEOS).reverse(), onListItemClicked, false);
             }
         }, 400);
     }
@@ -129,7 +129,7 @@ SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked)
     videoList.id = 'videoList';
     sideBarFrontContainer.appendChild(videoList);
 
-    updateVideoList(data.slice(-NUM_LATEST_VIDEOS), onListItemClicked, false);
+    updateVideoList(data.slice(-NUM_LATEST_VIDEOS).reverse(), onListItemClicked, false);
 }
 
 SideBar.focus = function() {
