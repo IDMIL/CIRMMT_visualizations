@@ -4,6 +4,12 @@ Visualizing the CIRMMT distinguished lectures
 
 https://idmil.gitlab.io/CIRMMT_visualizations/
 
+## Authors
+
+- [Mathias Bredholt](https://github.com/mathiasbredholt)
+- [Christian Frisson](http://frisson.re)
+- [Marcelo M. Wanderley](http://www.idmil.org)
+
 ## Data overview
 * Type
     - Lecture type
