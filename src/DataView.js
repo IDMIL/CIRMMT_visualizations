@@ -4,8 +4,8 @@ import forceBoundary from 'd3-force-boundary';
 
 import { data, topicsData, topicsDict } from './Globals';
 
-const WIDTH = 700;
-const HEIGHT = 700;
+const WIDTH = 650;
+const HEIGHT = 650;
 
 const MIN_SIZE = 40;
 const MAX_SIZE = 55;
@@ -74,9 +74,9 @@ DataView.showDefaultView = function(clicked) {
     let simulation = forceSimulation(nodes_list)
         .force('link', forceLink(links_list).id(d => d.id))
         .force('charge', forceManyBody().strength(d => -d.value * 4))
-        .force('center', forceCenter(WIDTH * 0.5, HEIGHT * 0.55))
+        .force('center', forceCenter(WIDTH * 0.5, HEIGHT * 0.5))
         .force('collide', forceCollide().strength(0.95).radius(d => d.value * 1.08))
-        .force('boundary', forceBoundary(0, 0, WIDTH, HEIGHT).strength(0.2));
+        .force('boundary', forceBoundary(0, 0, WIDTH, HEIGHT).hardBoundary(true));
 
     let svg = select('#container').append('svg')
         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
@@ -330,7 +330,7 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
         if (d.Topic == selectedNode) {
             nodes[d.Topic] = {
                 id: d.Topic,
-                value: 50,
+                value: MAX_SIZE,
                 nodeType: DataView.TOPIC,
                 color: MIDDLE_COLOR,
             };
@@ -355,7 +355,7 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
     let simulation = forceSimulation(nodes_list)
         .force('link', forceLink(links_list).id(d => d.id).distance(225))
         .force('charge', forceManyBody().strength(-2000).theta(0.05))
-        .force('center', forceCenter(WIDTH / 2, HEIGHT / 2))
+        .force('center', forceCenter(WIDTH * 0.5, HEIGHT * 0.5))
         .force('boundary', forceBoundary(0, 0, WIDTH, HEIGHT).strength(0.2));
 
     let svg = select('#container').append('svg')

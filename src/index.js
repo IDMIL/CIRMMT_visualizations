@@ -24,9 +24,13 @@ let lastState = null;
 let lastVideo = null;
 let aboutMode = false;
 
+let container = document.createElement('div');
+container.id = 'container';
+document.body.appendChild(container);
+
 let siteTitle = document.createElement('div');
 siteTitle.id = 'siteTitle';
-document.body.appendChild(siteTitle);
+container.appendChild(siteTitle);
 
 let siteLogo = new Image();
 siteLogo.src = logo;
@@ -46,7 +50,7 @@ siteTitle.appendChild(siteAbout);
 let aboutContainer = document.createElement('div');
 aboutContainer.id = 'aboutContainer';
 aboutContainer.style.opacity = 0;
-document.getElementById('container').appendChild(aboutContainer);
+container.appendChild(aboutContainer);
 
 let aboutContent = document.createElement('div');
 aboutContent.id = 'aboutContent';
@@ -206,7 +210,7 @@ window.gapi_onload = function() {
 }
 
 // setTimeout(() => {
-            //     if (!isLoaded) {
-            //         start();
-            //     }
-            // }, 1000);
+//     if (!isLoaded) {
+//         start();
+//     }
+// }, 1000);
