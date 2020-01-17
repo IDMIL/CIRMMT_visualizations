@@ -57,23 +57,16 @@ aboutContent.id = 'aboutContent';
 aboutContent.innerHTML = 'Developed at Input Devices and Music Interaction Laboratory (IDMIL) for <br>Centre for Interdisciplinary Research in Music Media and Technology (CIRMMT) by <br>Mathias Bredholt, Christian Frisson, and Marcelo Wanderley.<br><br>&copy; McGill University 2019';
 aboutContainer.appendChild(aboutContent);
 
-function showAbout() {
+siteAbout.onclick = function() {
+    aboutMode = true;
     aboutContainer.style.opacity = 0.9;
     aboutContainer.style.visibility = 'visible';
 }
 
-function hideAbout() {
+aboutContainer.onclick = function() {
+    aboutMode = false;
     aboutContainer.style.opacity = 0.0;
     aboutContainer.style.visibility = 'hidden';
-}
-
-siteAbout.onclick = function() {
-    aboutMode = !aboutMode;
-    if (aboutMode) {
-        showAbout();
-    } else {
-        hideAbout();
-    }
 }
 
 function createURLFromState() {
