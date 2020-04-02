@@ -42,6 +42,7 @@ body {
 
 #siteLogo {
     height: 150%;
+    cursor: pointer;
 }
 
 #siteAbout {

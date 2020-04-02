@@ -5,6 +5,7 @@ pages:
     - mkdir .public
     - cp -a dist/. .public
     - mv .public public
+    - find public -type f -regex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -exec gzip -f
 
     artifacts:
         paths:

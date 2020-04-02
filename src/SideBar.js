@@ -1,6 +1,7 @@
 import './SideBar.css';
 import { data } from './Globals';
 import Fuse from 'fuse.js';
+import logo from './logo.png';
 
 let SideBar = {};
 
@@ -188,12 +189,24 @@ SideBar.showVideo = function(url) {
     let dateObj = new Date(node.Date);
     let dateString = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     playerDate.id = 'playerDate';
-    playerDate.innerHTML = `${node.Type}, ${dateString}, ${node.viewCount} views`;
+    playerDate.innerHTML = `${node.Type}, ${dateString}`;
+    if (node.viewCount) {
+        playerDate.innerHTML += `, ${node.viewCount} views`;
+    }
     playerContainer.appendChild(playerDate);
 
+    let playerDiv = document.createElement('div');
+    playerDiv.id = 'playerDiv';
+    playerContainer.appendChild(playerDiv);
+
     let player = document.createElement('player');
-    playerContainer.appendChild(player);
+    playerDiv.appendChild(player);
     player.id = 'ytvideo';
+
+    let playerLogo = new Image();
+    playerLogo.src = logo;
+    playerLogo.id = 'playerLogo';
+    playerDiv.appendChild(playerLogo);
 
     let playerSummary = document.createElement('div');
     playerSummary.id = 'playerSummary';

@@ -10,19 +10,17 @@
   },
   "author": "Mathias Bredholt <mathiasbredholt@gmail.com>",
   "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "css-loader": "^2.1.1",
     "csv-loader": "^3.0.2",
-    "d3": "^5.9.2",
+    "d3": "^5.15.0",
     "d3-force-boundary": "0.0.1",
-    "file-loader": "^4.0.0",
-    "fuse.js": "^3.4.5",
+    "file-loader": "^4.3.0",
+    "fuse.js": "^3.6.1",
     "lodash": "^4.17.14",
     "papaparse": "^4.6.3",
-    "query-string": "^6.8.1",
     "style-loader": "^0.23.1",
-    "webpack": "^4.32.2",
-    "webpack-cli": "^3.3.2"
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11"
   }
 }

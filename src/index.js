@@ -4,93 +4,109 @@ import logo from './logo.png';
 import { data } from './Globals';
 import DataView from './DataView';
 import SideBar from './SideBar';
-import QueryString from 'query-string';
 import _ from 'lodash';
 
 let ViewMode = {
     DEFAULT: 'default',
     TOPIC: 'topic',
-    RESEARCH_AXIS: 'researchAxis',
-    VIDEO: 'video'
+    RESEARCH_AXIS: 'researchAxis'
 }
 
-let state = {
+let SideBarMode = {
+    DEFAULT: 'default',
+    VIDEO: 'video' 
+}
+
+const defaultState = {
     mode: ViewMode.DEFAULT,
+    sidebar: SideBarMode.DEFAULT,
+    node: "",
+    video: "",
+    about: false
+}
+
+let state = Object.assign({}, defaultState);
+
+let lastState = {
+    mode: null,
+    sidebar: null,
     node: null,
+    video: null,
+    about: null,
 };
 
-let isLoaded = false;
-let lastState = null;
-let lastVideo = null;
-let aboutMode = false;
+function createTitle(parent) {
+    let siteTitle = document.createElement('div');
+    siteTitle.id = 'siteTitle';
+    parent.appendChild(siteTitle);
 
-let container = document.createElement('div');
-container.id = 'container';
-document.body.appendChild(container);
+    let siteLogo = new Image();
+    siteLogo.src = logo;
+    siteLogo.id = 'siteLogo';
+    siteTitle.appendChild(siteLogo);
 
-let siteTitle = document.createElement('div');
-siteTitle.id = 'siteTitle';
-container.appendChild(siteTitle);
+    let siteTitleText = document.createElement('div');
+    siteTitleText.id = 'siteTitleText';
+    siteTitleText.innerHTML = 'CIRMMT Distinguished Speaker Series Visualization';
+    siteTitle.appendChild(siteTitleText);
 
-let siteLogo = new Image();
-siteLogo.src = logo;
-siteLogo.id = 'siteLogo';
-siteTitle.appendChild(siteLogo);
+    let siteAbout = document.createElement('div');
+    siteAbout.id = 'siteAbout';
+    siteAbout.innerHTML = 'about';
+    siteTitle.appendChild(siteAbout);
 
-let siteTitleText = document.createElement('div');
-siteTitleText.id = 'siteTitleText';
-siteTitleText.innerHTML = 'CIRMMT Distinguished Speaker Series Visualization';
-siteTitle.appendChild(siteTitleText);
+    let aboutContainer = document.createElement('div');
+    aboutContainer.id = 'aboutContainer';
+    aboutContainer.style.opacity = 0;
+    parent.appendChild(aboutContainer);
 
-let siteAbout = document.createElement('div');
-siteAbout.id = 'siteAbout';
-siteAbout.innerHTML = 'about';
-siteTitle.appendChild(siteAbout);
+    let aboutContent = document.createElement('div');
+    aboutContent.id = 'aboutContent';
+    aboutContent.innerHTML = 'Developed at Input Devices and Music Interaction Laboratory (IDMIL) for <br>Centre for Interdisciplinary Research in Music Media and Technology (CIRMMT) by <br>Mathias Bredholt, Christian Frisson, and Marcelo Wanderley.<br><br>&copy; McGill University 2019';
+    aboutContainer.appendChild(aboutContent);
 
-let aboutContainer = document.createElement('div');
-aboutContainer.id = 'aboutContainer';
-aboutContainer.style.opacity = 0;
-container.appendChild(aboutContainer);
+    siteAbout.onclick = function() {
+        state.about = true;
+        window.history.pushState(state, null, createURLFromState());
+        update();
+    }
 
-let aboutContent = document.createElement('div');
-aboutContent.id = 'aboutContent';
-aboutContent.innerHTML = 'Developed at Input Devices and Music Interaction Laboratory (IDMIL) for <br>Centre for Interdisciplinary Research in Music Media and Technology (CIRMMT) by <br>Mathias Bredholt, Christian Frisson, and Marcelo Wanderley.<br><br>&copy; McGill University 2019';
-aboutContainer.appendChild(aboutContent);
+    aboutContainer.onclick = function() {
+        state.about = false;
+        window.history.pushState(state, null, createURLFromState());
+        update();
+    }
 
-siteAbout.onclick = function() {
-    aboutMode = true;
-    aboutContainer.style.opacity = 0.9;
-    aboutContainer.style.visibility = 'visible';
-}
-
-aboutContainer.onclick = function() {
-    aboutMode = false;
-    aboutContainer.style.opacity = 0.0;
-    aboutContainer.style.visibility = 'hidden';
 }
 
 function createURLFromState() {
-    return `?mode=${state.mode}&node=${state.node.replace('&', 'and')}`;
+    if (state.mode == ViewMode.TOPIC) {
+        let str = `?/${state.node}`;
+        if (state.sidebar == SideBarMode.VIDEO) {
+            str += `/${state.video}`;
+        }
+        return str;
+    } else {
+        return '/';
+    }
 }
 
 function videoClicked(selectedNode) {
-    state.mode = ViewMode.VIDEO;
-    state.node = selectedNode.id;
+    state.sidebar = SideBarMode.VIDEO;
+    state.video = selectedNode.id;
     window.history.pushState(state, null, createURLFromState());
     update();
 }
 
 function backButtonClicked() {
     state.mode = ViewMode.DEFAULT;
-    window.history.pushState(state, null, window.location.pathname);
+    state.sidebar = ViewMode.DEFAULT;
+    window.history.pushState(state, null, createURLFromState());
     update();
 }
 
 function nodeClicked(selectedNode) {
     if (selectedNode.nodeType == DataView.RESEARCH_AXIS) {
-        // state.mode = ViewMode.RESEARCH_AXIS;
-        // state.node = selectedNode.id;
-        // window.history.pushState(state, null, createURLFromState());
         SideBar.focus();
     } else {
         state.mode = ViewMode.TOPIC;
@@ -103,107 +119,111 @@ function nodeClicked(selectedNode) {
 function onSearch(results) {}
 
 function onListItemClicked(url) {
-    state.mode = ViewMode.VIDEO;
-    state.node = url;
+    state.sidebar = SideBarMode.VIDEO;
+    state.video = url;
     window.history.pushState(state, null, createURLFromState());
     update();
 }
 
 function update() {
-    if (!_.isEqual(state, lastState)) {
+    if (state.mode != lastState.mode) {
         if (state.mode == ViewMode.DEFAULT) {
-            SideBar.showDefaultMode();
             DataView.showDefaultView(nodeClicked);
-            document.getElementById('container').style.width = '65%';
             document.title = 'CIRMMT Distinguished Speaker Series Visualization';
         } else if (state.mode == ViewMode.TOPIC) {
-            SideBar.showDefaultMode();
             DataView.showTopicView(state.node, videoClicked, backButtonClicked);
-            document.getElementById('container').style.width = '65%';
             document.title = state.node;
-            // } else if (state.mode == ViewMode.RESEARCH_AXIS) {
-            //     DataView.show();
-            //     hideAbout();
-            //     DataView.showResearchAxisView(
-            //         state.node,
-            //         videoClicked,
-            //         nodeClicked,
-            //         backButtonClicked);
-        } else if (state.mode == ViewMode.VIDEO) {
-            if (lastVideo != state.node) {
-                SideBar.showVideo(state.node);
-            }
-            lastVideo = state.node;
+        }
+    }
+    if (state.sidebar != lastState.sidebar ||
+        state.video != lastState.video) {
+        if (state.sidebar == SideBarMode.DEFAULT) {
+            SideBar.showDefaultMode();
+            document.getElementById('container').style.width = '65%';
+        } else if (state.sidebar == SideBarMode.VIDEO) {
+            SideBar.showVideo(state.video);
             document.getElementById('container').style.width = '55%';
+        }
+    }
+    if (state.about != lastState.about) {
+        if (state.about) {
+            aboutContainer.style.opacity = 0.9;
+            aboutContainer.style.visibility = 'visible';
+        } else {
+            aboutContainer.style.opacity = 0.0;
+            aboutContainer.style.visibility = 'hidden';
         }
     }
     lastState = _.clone(state);
 }
 
-window.onpopstate = function(event) {
-    if (event.state) { state = event.state; }
-    update();
-}
-
-let queryState = QueryString.parse(location.search);
-if (queryState.mode && queryState.node) {
-    queryState.node = queryState.node.replace('and', '&');
-    state = queryState;
-    if (state.mode == ViewMode.VIDEO) {
-        DataView.showDefaultView(nodeClicked);
+function loadYouTubeAPI() {
+    window.gapi_onload = function() {
+        gapi.client.setApiKey('AIzaSyC85M7HHPkTkhImeOapMjvEgFbkMeo570Y');
+        gapi.client.load('youtube', 'v3', function() {
+            let urls = data.map(d => d.YouTube);
+            let groups = _.chunk(urls, 50);
+            const num_requests = groups.length;
+            let r = 0;
+            groups.forEach(g => {
+                gapi.client.youtube.videos.list({
+                    'part': 'statistics',
+                    'id': g.join(',')
+                }).then(response => {
+                    response.result.items.forEach(d => {
+                        let v = data.find(q => q.YouTube == d.id);
+                        if (v) {
+                            v.viewCount = d.statistics.viewCount;
+                        }
+                    });
+                    ++r;
+                    if (r == num_requests) {
+                        console.log('Retrieved data from YouTube API.');
+                    }
+                }, err => {
+                    console.error('Execute error', err);
+                });
+            });
+        });
     }
 }
 
-window.history.replaceState(state, null, '');
-
-function start() {
-    SideBar.createSideBar(backButtonClicked, onSearch, onListItemClicked);
-    update();
-}
-
-// Load YouTube Player API code asynchronously.
-let tag = document.createElement('script');
-tag.src = 'https://www.youtube.com/player_api';
-let firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-// Load YouTube Data API code asynchronously.
-tag = document.createElement('script');
-tag.src = 'https://apis.google.com/js/client.js';
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-window.gapi_onload = function() {
-    gapi.client.setApiKey('AIzaSyC85M7HHPkTkhImeOapMjvEgFbkMeo570Y');
-    gapi.client.load('youtube', 'v3', function() {
-        let urls = data.map(d => d.YouTube);
-        let groups = _.chunk(urls, 50);
-        const num_requests = groups.length;
-        let r = 0;
-        groups.forEach(g => {
-            gapi.client.youtube.videos.list({
-                'part': 'statistics',
-                'id': g.join(',')
-            }).then(response => {
-                response.result.items.forEach(d => {
-                    let v = data.find(q => q.YouTube == d.id);
-                    if (v) {
-                        v.viewCount = d.statistics.viewCount;
-                    }
-                });
-                ++r;
-                if (r == num_requests) {
-                    start();
-                    isLoaded = true;
-                }
-            }, err => {
-                console.error('Execute error', err);
-            });
-        });
+function parseStateFromURL() {
+    state = Object.assign({}, defaultState);
+    // Parse address string
+    location.search.replace('?/','').split('/').filter(d => d != '').map((d, i) => {
+        if (i >= 0) {
+            state.mode = ViewMode.TOPIC;
+        }
+        if (i == 0) {
+            state.node = d.replace(/%20/g, ' ');
+        }
+        if (i == 1) {
+            state.sidebar = SideBarMode.VIDEO;
+            state.video = d;
+        }
     });
 }
 
-// setTimeout(() => {
-//     if (!isLoaded) {
-//         start();
-//     }
-// }, 1000);
+function start() {
+    let container = document.createElement('div');
+    container.id = 'container';
+    document.body.appendChild(container);
+
+    createTitle(container);
+
+    window.onpopstate = function(event) {
+        parseStateFromURL();
+        update();
+    }
+
+    siteLogo.onclick = e => backButtonClicked();
+
+    SideBar.createSideBar(backButtonClicked, onSearch, onListItemClicked);
+
+    parseStateFromURL();
+    update();
+    loadYouTubeAPI();
+}
+
+start();

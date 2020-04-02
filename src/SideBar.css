@@ -119,9 +119,27 @@
 #ytvideo {
     display: block;
     width: 100%;
-    height: 35vh;
+    height: 100%;
+}
+
+#playerDiv {
+    position: relative;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     margin-top: 1rem;
     margin-bottom: 1rem;
+    width: 100%;
+    height: 35vh;
+}
+
+#playerLogo {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    opacity: 0.4;
+    z-index: -1;
+    filter: blur(2px);
 }
