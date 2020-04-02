@@ -81,13 +81,13 @@ function createTitle(parent) {
 
 function createURLFromState() {
     if (state.mode == ViewMode.TOPIC) {
-        let str = `${state.node}`;
+        let str = `CIRMMT_visualizations/?/${state.node}`;
         if (state.sidebar == SideBarMode.VIDEO) {
             str += `/${state.video}`;
         }
         return str;
     } else {
-        return 'CIRMMT_visualizations/';
+        return 'CIRMMT_visualizations/?/';
     }
 }
 
