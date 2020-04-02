@@ -81,13 +81,13 @@ function createTitle(parent) {
 
 function createURLFromState() {
     if (state.mode == ViewMode.TOPIC) {
-        let str = `?/${state.node}`;
+        let str = `${state.node}`;
         if (state.sidebar == SideBarMode.VIDEO) {
             str += `/${state.video}`;
         }
         return str;
     } else {
-        return '/';
+        return 'CIRMMT_visualizations/';
     }
 }
 
@@ -191,7 +191,7 @@ function loadYouTubeAPI() {
 function parseStateFromURL() {
     state = Object.assign({}, defaultState);
     // Parse address string
-    location.search.replace('?/','').split('/').filter(d => d != '').map((d, i) => {
+    location.search.replace('CIRMMT_visualizations/','').split('/').filter(d => d != '').map((d, i) => {
         if (i >= 0) {
             state.mode = ViewMode.TOPIC;
         }
