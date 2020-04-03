@@ -21,7 +21,7 @@ const defaultState = {
     mode: ViewMode.DEFAULT,
     sidebar: SideBarMode.DEFAULT,
     node: "",
-    video: "",
+    topic: "",
     about: false
 }
 
@@ -31,7 +31,7 @@ let lastState = {
     mode: null,
     sidebar: null,
     node: null,
-    video: null,
+    topic: null,
     about: null,
 };
 
@@ -81,9 +81,9 @@ function createTitle(parent) {
 
 function createURLFromState() {
     if (state.mode == ViewMode.TOPIC) {
-        let str = `?/${state.node}`;
+        let str = `?/${state.topic}`;
         if (state.sidebar == SideBarMode.VIDEO) {
-            str += `/${state.video}`;
+            str += `/${state.node.Lecturer}`;
         }
         return str;
     } else {
@@ -91,10 +91,23 @@ function createURLFromState() {
     }
 }
 
-function videoClicked(selectedNode) {
+function videoClicked(node) {
+    state.mode = ViewMode.TOPIC;
     state.sidebar = SideBarMode.VIDEO;
-    state.video = selectedNode.id;
+    state.node = node;
+    state.topic = state.node.Topic;
     window.history.pushState(state, null, createURLFromState());
+    update();
+}
+
+function nodeClicked(selectedNode) {
+    if (selectedNode.nodeType == DataView.RESEARCH_AXIS) {
+        SideBar.focus();
+    } else {
+        state.mode = ViewMode.TOPIC;
+        state.topic = selectedNode.Topic;
+        window.history.pushState(state, null, createURLFromState());
+    }
     update();
 }
 
@@ -105,25 +118,7 @@ function backButtonClicked() {
     update();
 }
 
-function nodeClicked(selectedNode) {
-    if (selectedNode.nodeType == DataView.RESEARCH_AXIS) {
-        SideBar.focus();
-    } else {
-        state.mode = ViewMode.TOPIC;
-        state.node = selectedNode.id;
-        window.history.pushState(state, null, createURLFromState());
-    }
-    update();
-}
-
 function onSearch(results) {}
-
-function onListItemClicked(url) {
-    state.sidebar = SideBarMode.VIDEO;
-    state.video = url;
-    window.history.pushState(state, null, createURLFromState());
-    update();
-}
 
 function update() {
     if (state.mode != lastState.mode) {
@@ -131,17 +126,17 @@ function update() {
             DataView.showDefaultView(nodeClicked);
             document.title = 'CIRMMT Distinguished Speaker Series Visualization';
         } else if (state.mode == ViewMode.TOPIC) {
-            DataView.showTopicView(state.node, videoClicked, backButtonClicked);
-            document.title = state.node;
+            DataView.showTopicView(state.topic, videoClicked, backButtonClicked);
+            document.title = state.topic;
         }
     }
     if (state.sidebar != lastState.sidebar ||
-        state.video != lastState.video) {
+        state.node != lastState.node) {
         if (state.sidebar == SideBarMode.DEFAULT) {
             SideBar.showDefaultMode();
             document.getElementById('container').style.width = '65%';
         } else if (state.sidebar == SideBarMode.VIDEO) {
-            SideBar.showVideo(state.video);
+            SideBar.showVideo(state.node);
             document.getElementById('container').style.width = '55%';
         }
     }
@@ -192,15 +187,17 @@ function parseStateFromURL() {
     state = Object.assign({}, defaultState);
     // Parse address string
     location.search.replace('?/','').split('/').filter(d => d != '').map((d, i) => {
+        d = d.replace(/%20/g, ' ');
         if (i >= 0) {
             state.mode = ViewMode.TOPIC;
         }
         if (i == 0) {
-            state.node = d.replace(/%20/g, ' ');
+            state.topic = d;
         }
         if (i == 1) {
             state.sidebar = SideBarMode.VIDEO;
-            state.video = d;
+            state.node = data.find(v => v.Lecturer == d);
+            state.topic = state.node.Topic;
         }
     });
 }
@@ -219,7 +216,7 @@ function start() {
 
     siteLogo.onclick = e => backButtonClicked();
 
-    SideBar.createSideBar(backButtonClicked, onSearch, onListItemClicked);
+    SideBar.createSideBar(backButtonClicked, onSearch, videoClicked);
 
     parseStateFromURL();
     update();

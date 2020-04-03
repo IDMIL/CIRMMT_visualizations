@@ -48,20 +48,20 @@ DataView.showDefaultView = function(clicked) {
     let links = {};
 
     topicsData.forEach(function(d) {
-        nodes[d.ResearchAxis] = {
+        nodes[d.ResearchAxis] = Object.assign({
             id: d.ResearchAxis,
             value: MAX_SIZE,
             color: MIDDLE_COLOR,
             nodeType: DataView.RESEARCH_AXIS,
             researchAxis: d.ResearchAxis
-        };
-        nodes[d.Topic] = {
+        }, d);
+        nodes[d.Topic] = Object.assign({
             id: d.Topic,
             value: MIN_SIZE + topicsDict[d.Topic]['count'] * 3,
             color: MIDDLE_COLOR2,
             nodeType: DataView.TOPIC,
             researchAxis: d.ResearchAxis
-        };
+        }, d);
         let l = {};
         l.source = d.ResearchAxis;
         l.target = d.Topic;
@@ -176,18 +176,18 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
 
     data.forEach(function(d) {
         if (d.Topic == selectedNode) {
-            nodes[d.Topic] = {
+            nodes[d.Topic] = Object.assign({
                 id: d.Topic,
                 value: MAX_SIZE,
                 nodeType: DataView.TOPIC,
                 color: MIDDLE_COLOR,
-            };
-            nodes[d.YouTube] = {
+            }, d);
+            nodes[d.YouTube] = Object.assign({
                 id: d.YouTube,
                 value: 15,
                 nodeType: DataView.VIDEO,
                 color: MIDDLE_COLOR2
-            };
+            }, d);
             Object.assign(nodes[d.YouTube], d);
             let l = {};
             l.source = d.Topic;
@@ -203,7 +203,7 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
     let simulation = forceSimulation(nodes_list)
         .force('link', forceLink(links_list).id(d => d.id).distance(225))
         .force('charge', forceManyBody().strength(-2000).theta(0.05))
-        .force('center', forceCenter(WIDTH * 0.5, HEIGHT * 0.45))
+        .force('center', forceCenter(WIDTH * 0.5, HEIGHT * 0.43))
         .force('boundary', forceBoundary(0, 0, WIDTH, HEIGHT).strength(0.2));
 
     let svg = select('#container').append('svg')

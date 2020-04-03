@@ -35,7 +35,7 @@ function updateVideoList(list, onListItemClicked, isSearchResults) {
         let videoListItem = document.createElement('div');
         videoListItem.classList.add('videoListItem');
         videoListItem.onclick = function() {
-            onListItemClicked(d.YouTube);
+            onListItemClicked(d);
         }
 
         let videoListItemThumb = new Image();
@@ -152,14 +152,7 @@ SideBar.showDefaultMode = function() {
     }, 500);
 }
 
-SideBar.showVideo = function(url) {
-    let node;
-    data.forEach((d) => {
-        if (d.YouTube == url) {
-            node = d;
-        }
-    });
-
+SideBar.showVideo = function(node) {
     document.title = node.Lecturer + ': ' + node.Title;
 
     let elem = document.getElementById('playerContainer');
