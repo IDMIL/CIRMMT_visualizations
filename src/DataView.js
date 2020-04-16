@@ -236,8 +236,8 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
                 .attr('fill', d.color);
         });
 
-    node.append('foreignObject')
-        .filter(d => d.nodeType == DataView.TOPIC)
+    node.filter(d => d.nodeType == DataView.TOPIC)
+        .append('foreignObject')
         .attr('class', 'nodeTextBox')
         .attr('x', d => -d.value)
         .attr('y', d => -d.value)
@@ -249,8 +249,8 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
 
     var request = new XMLHttpRequest();
 
-    let title = node.append('foreignObject')
-        .filter(d => d.nodeType == DataView.VIDEO)
+    let title = node.filter(d => d.nodeType == DataView.VIDEO)
+        .append('foreignObject')    
         .attr('class', 'nodeTitleBox')
         .attr('x', d => d.value + 8)
         .attr('y', d => -d.value)
