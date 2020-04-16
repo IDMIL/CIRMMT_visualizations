@@ -110,13 +110,14 @@ body {
     padding-right: 0.8em;
     user-select: none;
     pointer-events: none;
-    font-size: 1rem;
+    font-size: 0.9rem;
 }
 
 .nodeTextBoxBody {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 1rem;
 }
 
 .nodeTitleBox {
