@@ -22,6 +22,7 @@ const defaultState = {
     sidebar: SideBarMode.DEFAULT,
     node: "",
     topic: "",
+    researchAxis: "",
     about: false
 }
 
@@ -80,8 +81,11 @@ function createTitle(parent) {
 }
 
 function createURLFromState() {
-    if (state.mode == ViewMode.TOPIC) {
-        let str = `?/${state.topic}`;
+    let str = `?/${state.researchAxis}`;
+    if (state.mode == ViewMode.RESEARCH_AXIS) {
+        return str;
+    } else if (state.mode == ViewMode.TOPIC) {
+        str += `/${state.topic}`;
         if (state.sidebar == SideBarMode.VIDEO) {
             str += `/${state.node.Lecturer}`;
         }
@@ -102,7 +106,10 @@ function videoClicked(node) {
 
 function nodeClicked(selectedNode) {
     if (selectedNode.nodeType == DataView.RESEARCH_AXIS) {
-        SideBar.focus();
+        state.mode = ViewMode.RESEARCH_AXIS;
+        state.researchAxis = selectedNode.ResearchAxis;
+        console.log(selectedNode);
+        window.history.pushState(state, null, createURLFromState());
     } else {
         state.mode = ViewMode.TOPIC;
         state.topic = selectedNode.Topic;
@@ -125,6 +132,9 @@ function update() {
         if (state.mode == ViewMode.DEFAULT) {
             DataView.showDefaultView(nodeClicked);
             document.title = 'CIRMMT Distinguished Speaker Series Visualization';
+        } else if (state.mode == ViewMode.RESEARCH_AXIS) {
+            DataView.showResearchAxisView(state.researchAxis, nodeClicked, backButtonClicked);
+            document.title = state.researchAxis;
         } else if (state.mode == ViewMode.TOPIC) {
             DataView.showTopicView(state.topic, videoClicked, backButtonClicked);
             document.title = state.topic;
@@ -188,13 +198,14 @@ function parseStateFromURL() {
     // Parse address string
     location.search.replace('?/','').split('/').filter(d => d != '').map((d, i) => {
         d = d.replace(/%20/g, ' ');
-        if (i >= 0) {
-            state.mode = ViewMode.TOPIC;
-        }
         if (i == 0) {
+            state.mode = ViewMode.RESEARCH_AXIS;
+            state.researchAxis = d;
+        } else if (i == 1) {
+            state.mode = ViewMode.TOPIC;
             state.topic = d;
-        }
-        if (i == 1) {
+        } else if (i == 2) {
+            state.mode = ViewMode.TOPIC;
             state.sidebar = SideBarMode.VIDEO;
             state.node = data.find(v => v.Lecturer == d);
             state.topic = state.node.Topic;

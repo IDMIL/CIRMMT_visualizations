@@ -18,7 +18,7 @@ const Mode = {
 
 let mode = Mode.DEFAULT;
 
-const NUM_LATEST_VIDEOS = 5;
+const NUM_LATEST_VIDEOS = 10;
 
 function updateVideoList(list, onListItemClicked, isSearchResults) {
     while (videoList.firstChild) {
