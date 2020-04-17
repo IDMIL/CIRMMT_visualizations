@@ -1,11 +1,10 @@
 import { select, selectAll } from 'd3-selection';
 import { forceSimulation, forceLink, forceCenter, forceManyBody, forceCollide } from 'd3-force';
-import forceBoundary from 'd3-force-boundary';
 
 import { data, topicsData, topicsDict } from './Globals';
 
-const WIDTH = 650;
-const HEIGHT = 650;
+const WIDTH = 700;
+const HEIGHT = 700;
 
 const MIN_SIZE = 35;
 const MAX_SIZE = 60;
@@ -73,10 +72,9 @@ DataView.showDefaultView = function(clicked) {
 
     let simulation = forceSimulation(nodes_list)
         .force('link', forceLink(links_list).id(d => d.id))
-        .force('charge', forceManyBody().strength(d => -d.value * 4))
-        .force('center', forceCenter(WIDTH * 0.5, HEIGHT * 0.5))
+        .force('charge', forceManyBody().strength(d => -d.value))
         .force('collide', forceCollide().strength(0.95).radius(d => d.value * 1.08))
-        .force('boundary', forceBoundary(0, 0, WIDTH, HEIGHT).hardBoundary(true));
+        .force('center', forceCenter(WIDTH * 0.5 - MAX_SIZE / 2, HEIGHT * 0.5 - MAX_SIZE / 2));
 
     let svg = select('#container').append('svg')
         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
@@ -89,7 +87,7 @@ DataView.showDefaultView = function(clicked) {
         .data(nodes_list)
         .join('g')
         .attr('class', d => d.nodeType == DataView.TOPIC ? 'node' : 'nodeNonClickable')
-        .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
+        .attr('transform', d => `translate(${d.x},${d.y})`)
         .on('mouseover', function(d) {
             let createLink = function(l) {
                 link.append('line')
@@ -144,13 +142,16 @@ DataView.showDefaultView = function(clicked) {
         .html(d => d.id);
 
     simulation.on('tick', () => {
+        node.attr('transform', d => {
+            d.x = Math.max(d.value, Math.min(WIDTH - d.value, d.x));
+            d.y = Math.max(d.value, Math.min(HEIGHT - d.value, d.y));
+            return `translate(${d.x},${d.y})`;
+        });
         selectAll('.link')
             .attr('x1', d => d.source.x)
             .attr('y1', d => d.source.y)
             .attr('x2', d => d.target.x)
             .attr('y2', d => d.target.y);
-        node
-            .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
     });
 
     node.on('click', d => {
@@ -174,21 +175,19 @@ DataView.showResearchAxisView = function(selectedNode, nodeClicked, back) {
     let nodes = {};
     let links = {};
 
-    data.forEach(function(d) {
+    topicsData.forEach(function(d) {
         if (d.ResearchAxis == selectedNode) {
             nodes[d.ResearchAxis] = Object.assign({
                 id: d.ResearchAxis,
                 value: MAX_SIZE,
                 color: MIDDLE_COLOR,
                 nodeType: DataView.RESEARCH_AXIS,
-                researchAxis: d.ResearchAxis
             }, d);
             nodes[d.Topic] = Object.assign({
                 id: d.Topic,
                 value: Math.min(MIN_SIZE + topicsDict[d.Topic]['count'] * 3, MAX_SIZE),
                 color: MIDDLE_COLOR2,
                 nodeType: DataView.TOPIC,
-                researchAxis: d.ResearchAxis
             }, d);
             let l = {};
             l.source = d.ResearchAxis;
@@ -219,9 +218,8 @@ DataView.showResearchAxisView = function(selectedNode, nodeClicked, back) {
     let simulation = forceSimulation(nodes_list)
         .force('link', forceLink(links_list).id(d => d.id))
         .force('charge', forceManyBody().strength(d => -d.value * 8))
-        .force('center', forceCenter(WIDTH * 0.5, HEIGHT * 0.5))
         .force('collide', forceCollide().strength(0.95).radius(d => d.value * 1.08))
-        .force('boundary', forceBoundary(0, 0, WIDTH, HEIGHT).hardBoundary(true));
+        .force('center', forceCenter(WIDTH * 0.5 - MAX_SIZE / 2, HEIGHT * 0.5 - MAX_SIZE / 2));
 
     let svg = select('#container').append('svg')
         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
@@ -362,13 +360,16 @@ DataView.showResearchAxisView = function(selectedNode, nodeClicked, back) {
     //     .html(d => d.id);
 
     simulation.on('tick', () => {
+        node.attr('transform', d => {
+            d.x = Math.max(d.value, Math.min(WIDTH - d.value, d.x));
+            d.y = Math.max(d.value, Math.min(HEIGHT - d.value, d.y));
+            return `translate(${d.x},${d.y})`;
+        });
         selectAll('.link')
             .attr('x1', d => d.source.x)
             .attr('y1', d => d.source.y)
             .attr('x2', d => d.target.x)
             .attr('y2', d => d.target.y);
-        node
-            .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
     });
 
     node.on('click', d => {
@@ -423,8 +424,7 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
     let simulation = forceSimulation(nodes_list)
         .force('link', forceLink(links_list).id(d => d.id).distance(225))
         .force('charge', forceManyBody().strength(-2000).theta(0.05))
-        .force('center', forceCenter(WIDTH * 0.45, HEIGHT * 0.43))
-        .force('boundary', forceBoundary(0, 0, WIDTH, HEIGHT).strength(0.2));
+        .force('center', forceCenter(WIDTH * 0.5 - MAX_SIZE / 2, HEIGHT * 0.5 - MAX_SIZE / 2));
 
     let svg = select('#container').append('svg')
         .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
@@ -495,13 +495,16 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
         .html(d => d.Title);
 
     simulation.on('tick', () => {
+        node.attr('transform', d => {
+            d.x = Math.max(d.value, Math.min(WIDTH - d.value, d.x));
+            d.y = Math.max(d.value, Math.min(HEIGHT - d.value, d.y));
+            return `translate(${d.x},${d.y})`;
+        });
         link
             .attr('x1', d => d.source.x)
             .attr('y1', d => d.source.y)
             .attr('x2', d => d.target.x)
             .attr('y2', d => d.target.y);
-        node
-            .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
     });
 
     node.on('click', d => {

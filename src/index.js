@@ -108,7 +108,6 @@ function nodeClicked(selectedNode) {
     if (selectedNode.nodeType == DataView.RESEARCH_AXIS) {
         state.mode = ViewMode.RESEARCH_AXIS;
         state.researchAxis = selectedNode.ResearchAxis;
-        console.log(selectedNode);
         window.history.pushState(state, null, createURLFromState());
     } else {
         state.mode = ViewMode.TOPIC;
