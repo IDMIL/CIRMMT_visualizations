@@ -217,7 +217,7 @@ DataView.showResearchAxisView = function(selectedNode, nodeClicked, back) {
 
     let simulation = forceSimulation(nodes_list)
         .force('link', forceLink(links_list).id(d => d.id))
-        .force('charge', forceManyBody().strength(d => -d.value * 8))
+        .force('charge', forceManyBody().strength(d => -d.value * 50).theta(0.05))
         .force('collide', forceCollide().strength(0.95).radius(d => d.value * 1.08))
         .force('center', forceCenter(WIDTH * 0.5 - MAX_SIZE / 2, HEIGHT * 0.5 - MAX_SIZE / 2));
 

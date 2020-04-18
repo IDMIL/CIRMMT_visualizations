@@ -126,6 +126,7 @@ function nodeClicked(selectedNode) {
     } else {
         state.mode = ViewMode.TOPIC;
         state.topic = selectedNode.Topic;
+        state.researchAxis = "?";
         window.history.pushState(state, null, createURLFromState());
     }
     update();
@@ -211,7 +212,9 @@ function parseStateFromURL() {
         d = d.replace(/%20/g, ' ');
         if (i == 0) {
             state.mode = ViewMode.RESEARCH_AXIS;
-            state.researchAxis = d;
+            if (d != "?") {
+                state.researchAxis = d;                
+            }
         } else if (i == 1) {
             state.mode = ViewMode.TOPIC;
             state.topic = d;
