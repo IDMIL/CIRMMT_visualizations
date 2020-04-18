@@ -60,19 +60,31 @@ body {
     width: 100%;
     height: 100%;
     align-items: center;
+    justify-content: center;
     position: absolute;
-    transition: visibility 0.5s, opacity 0.5s;
+    transition: opacity 0.2s, visibility 0.2s;
     background: #FFF;
     visibility: hidden;
     cursor: pointer;
+    flex-direction: column;
 }
 
 #aboutContent {
     color: var(--textAlt);
     font-size: 1.2rem;
-    margin: auto;
-    text-align: center;
+    text-align: justify;
     line-height: 1.5em;
+    width: 80%;
+}
+
+#aboutLogos {
+    margin-top: 2em;
+    height: 30px;
+    display: flex;
+}
+
+.aboutLogoImg {
+    margin-right: 1em;
 }
 
 #container {

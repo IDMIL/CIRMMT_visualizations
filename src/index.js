@@ -1,5 +1,8 @@
 import './index.css';
 import logo from './logo.png';
+import idmilLogo from './idmil.png';
+import mcgillLogo from './mcgill.png';
+import aboutHtml from './about.html';
 
 import { data } from './Globals';
 import DataView from './DataView';
@@ -37,6 +40,11 @@ let lastState = {
 };
 
 function createTitle(parent) {
+    let aboutContainer = document.createElement('div');
+    aboutContainer.id = 'aboutContainer';
+    aboutContainer.style.opacity = 0;
+    parent.appendChild(aboutContainer);
+
     let siteTitle = document.createElement('div');
     siteTitle.id = 'siteTitle';
     parent.appendChild(siteTitle);
@@ -56,16 +64,6 @@ function createTitle(parent) {
     siteAbout.innerHTML = 'about';
     siteTitle.appendChild(siteAbout);
 
-    let aboutContainer = document.createElement('div');
-    aboutContainer.id = 'aboutContainer';
-    aboutContainer.style.opacity = 0;
-    parent.appendChild(aboutContainer);
-
-    let aboutContent = document.createElement('div');
-    aboutContent.id = 'aboutContent';
-    aboutContent.innerHTML = 'Developed at Input Devices and Music Interaction Laboratory (IDMIL) for <br>Centre for Interdisciplinary Research in Music Media and Technology (CIRMMT) by <br>Mathias Bredholt, Christian Frisson, and Marcelo Wanderley.<br><br>&copy; McGill University 2019';
-    aboutContainer.appendChild(aboutContent);
-
     siteAbout.onclick = function() {
         state.about = true;
         window.history.pushState(state, null, createURLFromState());
@@ -78,6 +76,21 @@ function createTitle(parent) {
         update();
     }
 
+    let aboutContent = document.createElement('div');
+    aboutContent.id = 'aboutContent';
+    aboutContent.innerHTML = aboutHtml;
+    aboutContainer.appendChild(aboutContent);
+
+    let aboutLogos = document.createElement('div');
+    aboutLogos.id = 'aboutLogos';
+    for (let l of [ logo, idmilLogo, mcgillLogo ]) {
+        let img = new Image();
+        img.src = l;
+        img.height = 30;
+        img.classList.add('aboutLogoImg');
+        aboutLogos.appendChild(img);
+    }
+    aboutContent.appendChild(aboutLogos);
 }
 
 function createURLFromState() {
@@ -150,7 +163,7 @@ function update() {
     }
     if (state.about != lastState.about) {
         if (state.about) {
-            aboutContainer.style.opacity = 0.9;
+            aboutContainer.style.opacity = 1.0;
             aboutContainer.style.visibility = 'visible';
         } else {
             aboutContainer.style.opacity = 0.0;
