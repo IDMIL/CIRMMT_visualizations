@@ -111,11 +111,6 @@ body {
     transition: opacity 0.25s;
 }
 
-.nodeNonClickable {
-    user-select: none;
-    transition: opacity 0.25s;
-}
-
 .nodeTextBox {
     text-align: center;
     padding-left: 0.8em;

@@ -86,7 +86,7 @@ DataView.showDefaultView = function(clicked) {
         .selectAll('g')
         .data(nodes_list)
         .join('g')
-        .attr('class', d => d.nodeType == DataView.TOPIC ? 'node' : 'nodeNonClickable')
+        .attr('class', 'node')
         .attr('transform', d => `translate(${d.x},${d.y})`)
         .on('mouseover', function(d) {
             let createLink = function(l) {
@@ -281,7 +281,7 @@ DataView.showResearchAxisView = function(selectedNode, nodeClicked, back) {
         .selectAll('g')
         .data(nodes_list)
         .join('g')
-        .attr('class', d => d.nodeType == DataView.TOPIC ? 'node' : 'nodeNonClickable')
+        .attr('class', 'node')
         .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
         .on('mouseover', function(d) {
             let createLink = function(l) {

@@ -126,7 +126,7 @@ function nodeClicked(selectedNode) {
     } else {
         state.mode = ViewMode.TOPIC;
         state.topic = selectedNode.Topic;
-        state.researchAxis = "?";
+        state.researchAxis = selectedNode.ResearchAxis;
         window.history.pushState(state, null, createURLFromState());
     }
     update();
