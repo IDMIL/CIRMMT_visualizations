@@ -100,6 +100,7 @@ function videoClicked(node) {
     state.sidebar = SideBarMode.VIDEO;
     state.node = node;
     state.topic = state.node.Topic;
+    state.researchAxis = state.node.ResearchAxis;
     window.history.pushState(state, null, createURLFromState());
     update();
 }
@@ -123,8 +124,6 @@ function backButtonClicked() {
     window.history.pushState(state, null, createURLFromState());
     update();
 }
-
-function onSearch(results) {}
 
 function update() {
     if (state.mode != lastState.mode) {
@@ -226,7 +225,7 @@ function start() {
 
     siteLogo.onclick = e => backButtonClicked();
 
-    SideBar.createSideBar(backButtonClicked, onSearch, videoClicked);
+    SideBar.createSideBar(backButtonClicked, videoClicked);
 
     parseStateFromURL();
     update();

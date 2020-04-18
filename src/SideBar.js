@@ -67,7 +67,7 @@ function updateVideoList(list, onListItemClicked, isSearchResults) {
     });
 }
 
-SideBar.createSideBar = function(backButtonClicked, onSearch, onListItemClicked) {
+SideBar.createSideBar = function(backButtonClicked, onListItemClicked) {
     element = document.createElement('div');
     element.id = 'sideBar';
 
