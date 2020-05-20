@@ -1,3 +1,5 @@
+<img src="https://github.com/IDMIL/CIRMMT_visualizations/blob/master/misc/front.png" width="512">
+
 # CIRMMT_visualizations
 
 Visualizing the CIRMMT distinguished lectures
