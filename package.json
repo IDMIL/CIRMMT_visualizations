@@ -16,7 +16,7 @@
     "d3": "^5.15.0",
     "file-loader": "^4.3.0",
     "fuse.js": "^3.6.1",
-    "lodash": "^4.17.14",
+    "lodash": "^4.17.19",
     "papaparse": "^4.6.3",
     "style-loader": "^0.23.1",
     "webpack": "^4.42.0",
