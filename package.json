@@ -19,7 +19,7 @@
     "lodash": "^4.17.19",
     "papaparse": "^5.2.0",
     "style-loader": "^0.23.1",
-    "webpack": "^4.42.0",
+    "webpack": "^4.46.0",
     "webpack-cli": "^3.3.11"
   },
   "devDependencies": {
