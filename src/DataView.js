@@ -90,7 +90,8 @@ DataView.showDefaultView = function(clicked) {
         .join('g')
         .attr('class', 'node')
         .attr('transform', d => `translate(${d.x},${d.y})`)
-        .on('mouseover', function(d) {
+        .on('mouseover', function(e) {
+            let d = e.target.__data__;
             let createLink = function(l) {
                 link.append('line')
                     .data([l])
@@ -116,7 +117,7 @@ DataView.showDefaultView = function(clicked) {
                 });
             }
         })
-        .on('mouseout', function(d) {
+        .on('mouseout', function() {
             selectAll('.link')
                 .remove();
         });
@@ -124,13 +125,13 @@ DataView.showDefaultView = function(clicked) {
     node.append('circle')
         .attr('r', d => d.value)
         .attr('fill', d => d.color)
-        .on('mouseover', function(d) {
+        .on('mouseover', function() {
             select(this)
                 .attr('fill', DARK_COLOR);
         })
-        .on('mouseout', function(d) {
+        .on('mouseout', function() {
             select(this)
-                .attr('fill', d.color);
+                .attr('fill', d => d.color);
         });
 
     node.append('foreignObject')
@@ -156,7 +157,8 @@ DataView.showDefaultView = function(clicked) {
             .attr('y2', d => d.target.y);
     });
 
-    node.on('click', d => {
+    node.on('click', e => {
+        let d = e.target.__data__;
         clicked(d);
     });
 
@@ -233,7 +235,8 @@ DataView.showResearchAxisView = function(selectedNode, nodeClicked, back) {
     //     .join('g')
     //     .attr('class', 'node')
     //     .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
-    //     .on('mouseover', function(d) {
+    //     .on('mouseover', function(e) {
+    //         let d = e.target.__data__;
     //         if (d.nodeType == DataView.VIDEO) {
     //             node.sort(function(a, b) { // select the parent and sort the path's
     //                 if (a.id != d.id) return -1; // a is not the hovered element, send 'a' to the back
@@ -270,7 +273,8 @@ DataView.showResearchAxisView = function(selectedNode, nodeClicked, back) {
     //             }).style('opacity', 0.25);
     //         }
     //     })
-    //     .on('mouseout', (d, i) => {
+    //     .on('mouseout', e => {
+    //         let d = e.target.__data__;
     //         if (d.nodeType == DataView.VIDEO) {
     //             node.style('opacity', 1.0);
     //             select('#nodeTitle').remove();
@@ -285,7 +289,8 @@ DataView.showResearchAxisView = function(selectedNode, nodeClicked, back) {
         .join('g')
         .attr('class', 'node')
         .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
-        .on('mouseover', function(d) {
+        .on('mouseover', function(e) {
+            let d = e.target.__data__;
             let createLink = function(l) {
                 link.append('line')
                     .data([l])
@@ -311,7 +316,7 @@ DataView.showResearchAxisView = function(selectedNode, nodeClicked, back) {
                 });
             }
         })
-        .on('mouseout', function(d) {
+        .on('mouseout', function() {
             selectAll('.link')
                 .remove();
         });
@@ -319,13 +324,13 @@ DataView.showResearchAxisView = function(selectedNode, nodeClicked, back) {
     node.append('circle')
         .attr('r', d => d.value)
         .attr('fill', d => d.color)
-        .on('mouseover', function(d) {
+        .on('mouseover', function() {
             select(this)
                 .attr('fill', DARK_COLOR);
         })
-        .on('mouseout', function(d) {
+        .on('mouseout', function() {
             select(this)
-                .attr('fill', d.color);
+                .attr('fill', d => d.color);
         });
 
     node.append('foreignObject')
@@ -341,13 +346,13 @@ DataView.showResearchAxisView = function(selectedNode, nodeClicked, back) {
     // node.append('circle')
     //     .attr('r', d => d.value)
     //     .attr('fill', d => d.color)
-    //     .on('mouseover', function(d) {
+    //     .on('mouseover', function() {
     //         select(this)
     //             .attr('fill', DARK_COLOR);
     //     })
-    //     .on('mouseout', function(d) {
+    //     .on('mouseout', function() {
     //         select(this)
-    //             .attr('fill', d.color);
+    //             .attr('fill', d => d.color);
     //     });
 
     // node.append('foreignObject')
@@ -374,7 +379,8 @@ DataView.showResearchAxisView = function(selectedNode, nodeClicked, back) {
             .attr('y2', d => d.target.y);
     });
 
-    node.on('click', d => {
+    node.on('click', e => {
+        let d = e.target.__data__;
         if (d.nodeType == DataView.RESEARCH_AXIS) {
             back();
         } else {
@@ -449,13 +455,13 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
     node.append('circle')
         .attr('r', d => d.value)
         .attr('fill', d => d.color)
-        .on('mouseover', function(d) {
+        .on('mouseover', function() {
             select(this)
                 .attr('fill', DARK_COLOR);
         })
-        .on('mouseout', function(d) {
+        .on('mouseout', function() {
             select(this)
-                .attr('fill', d.color);
+                .attr('fill', d => d.color);
         });
 
     node.filter(d => d.nodeType == DataView.TOPIC)
@@ -509,7 +515,8 @@ DataView.showTopicView = function(selectedNode, videoClicked, back) {
             .attr('y2', d => d.target.y);
     });
 
-    node.on('click', d => {
+    node.on('click', e => {
+        let d = e.target.__data__;
         if (d.nodeType == DataView.VIDEO) {
             videoClicked(d);
         } else {
