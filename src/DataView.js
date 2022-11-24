@@ -3,6 +3,8 @@ import { forceSimulation, forceLink, forceCenter, forceManyBody, forceCollide } 
 
 import { data, topicsData, topicsDict } from './Globals';
 
+import './variables.css';
+
 const WIDTH = 700;
 const HEIGHT = 700;
 
