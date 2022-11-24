@@ -65,4 +65,6 @@ typings/
 *.sublime-project
 *.sublime-workspace
 
-dist/
+dist/*.js
+dist/*.png
+dist/*.txt
