@@ -16,10 +16,19 @@ install_dependencies:
     paths:
       - node_modules/
 
-pages:
-  stage: deploy
+build:
+  stage: build
+  needs: ["install_dependencies"]
   script:
     - npm run build
+  artifacts:
+    paths:
+      - dist/
+
+pages:
+  stage: deploy
+  needs: ["build"]
+  script:
     - mkdir .public
     - cp -a dist/. .public
     - mv .public public
