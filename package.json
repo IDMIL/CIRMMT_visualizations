@@ -11,16 +11,16 @@
   "author": "Mathias Bredholt <mathiasbredholt@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "css-loader": "^2.1.1",
+    "css-loader": "^6.7.3",
     "csv-loader": "^3.0.2",
     "d3": "^7.6.1",
-    "file-loader": "^4.3.0",
+    "file-loader": "^6.2.0",
     "fuse.js": "^3.6.1",
     "lodash": "^4.17.19",
     "papaparse": "^5.2.0",
-    "style-loader": "^0.23.1",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.11"
+    "style-loader": "^3.3.1",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   },
   "devDependencies": {
     "html-loader": "^1.1.0"
