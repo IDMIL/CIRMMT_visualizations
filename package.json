@@ -29,6 +29,8 @@
     "css-loader": "^6.7.2",
     "csv-loader": "^3.0.5",
     "file-loader": "^6.2.0",
+    "gh-pages": "^5.0.0",
+    "git-repo-info": "^2.1.1",
     "html-loader": "^4.2.0",
     "postcss-loader": "^7.0.1",
     "postcss-variables-loader": "^6.0.0",
