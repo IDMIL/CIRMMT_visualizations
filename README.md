@@ -4,7 +4,7 @@
 
 Visualizing the CIRMMT distinguished lectures
 
-https://idmil.gitlab.io/CIRMMT_visualizations/
+https://idmil.github.io/CIRMMT_visualizations/
 
 ## Authors
 
