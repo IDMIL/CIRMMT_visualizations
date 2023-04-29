@@ -1,14 +1,4 @@
-:root {
-    font-size: 10pt;
-    --darkColor: #b6b9a7;
-    --middleColor: #c3d0c3;
-    --middleColor2: #e1e8ce;
-    --middleColor3: #f7f9ef;
-    --lightColor: #FAFFFB;
-    --textMain: #000;
-    --textAlt: #444;
-    --sideMargin: 1.8rem;
-}
+@import './variables.css';
 
 html,
 body {
