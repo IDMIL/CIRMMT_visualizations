@@ -16,10 +16,18 @@ module.exports = {
                 }
             },
             {
+                test: /\.variables.css$/,
+                use: [
+                    'postcss-variables-loader'
+                ]
+            },
+            {
                 test: /\.css$/,
+                exclude: /\.variables.css$/,
                 use: [
                     'style-loader',
-                    'css-loader'
+                    'css-loader',
+                    'postcss-loader'
                 ]
             },
             {
