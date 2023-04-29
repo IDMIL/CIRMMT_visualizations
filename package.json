@@ -6,7 +6,8 @@
   "repository": "https://gitlab.com/idmil/CIRMMT_visualizations.git",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "webpack",
+    "publish": "npm run build && node publish.js"
   },
   "author": "Mathias Bredholt <mathiasbredholt@gmail.com>",
   "contributors": [
@@ -29,6 +30,8 @@
     "css-loader": "^6.7.2",
     "csv-loader": "^3.0.5",
     "file-loader": "^6.2.0",
+    "gh-pages": "^5.0.0",
+    "git-repo-info": "^2.1.1",
     "html-loader": "^4.2.0",
     "postcss-loader": "^7.0.1",
     "postcss-variables-loader": "^6.0.0",
